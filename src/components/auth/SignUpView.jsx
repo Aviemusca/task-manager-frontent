@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 import SignupForm from "./SignUpForm";
-import { AuthFormContainer, AuthFormTitle, AuthFormFooter } from "./styles";
+import { AuthFormContainer, AuthFormTitle, AuthFormFooter } from "./authStyles";
 
 import routes from "../../routes";
 

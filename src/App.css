@@ -1,5 +1,21 @@
-.bg-gradient {
-  background-image: linear-gradient(to right, teal, indigo);
-  background-color: teal;
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+:root {
+  --project-container-color: #ffffffcc;
+  --form-container-color: #ffffff;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-image: linear-gradient(to right, #ac2cac40, #25779540, #4c4cd540);
 }
 /*(#ac2cac #257795, #4c4cd5);*/

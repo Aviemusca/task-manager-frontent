@@ -54,7 +54,7 @@ const Navbar = ({ userCredentials, setUserCredentials }) => {
   };
   return (
     <div className="bg-gradient">
-      <Menu color="" fixed="top" inverted>
+      <Menu fixed="top" inverted>
         <Container>
           {injectAppNameMenuItem()}
           {injectMenuLinkItem("Home", routes.pages.home)}

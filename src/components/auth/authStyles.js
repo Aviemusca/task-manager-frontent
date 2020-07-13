@@ -6,6 +6,7 @@ export const AuthFormContainer = styled.div`
   border: solid 1px #ddd;
   margin: 5em auto;
   padding: 1.5em 3em;
+  background-color: var(--form-container-color);
 `;
 export const AuthForm = styled.form`
   width: 100%;
