@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import ProjectCard from "./ProjectCard";
 
@@ -8,12 +8,7 @@ const ProjectCardList = ({ projects }) => {
   return (
     <CardGrid>
       {projects.map((project) => (
-        <ProjectCard
-          key={project.id}
-          dateCreated={project.dateCreated}
-          title={project.title}
-          description={project.description}
-        />
+        <ProjectCard key={project.id} project={project} />
       ))}
     </CardGrid>
   );

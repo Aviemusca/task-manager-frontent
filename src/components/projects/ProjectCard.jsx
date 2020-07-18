@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   Card,
   CardTitle,
@@ -6,17 +7,23 @@ import {
   CardDescription,
 } from "./ProjectStyles";
 
-const project = {
-  title: "Task Manager Web App",
-  dateCreated: "12th July 2020",
-  percentageComplete: 0,
-  description: "A web application for managing project tasks.",
-};
+import routes from "../../routes";
 
-const ProjectCard = ({ title, dateCreated, description }) => {
+const ProjectCard = ({ project }) => {
+  const { title, dateCreated, description, slug } = project;
   return (
     <Card>
-      <CardTitle>{title}</CardTitle>
+      <NavLink
+        to={{
+          pathname: routes.pages.projects.detail(slug),
+          state: {
+            project: project,
+          },
+        }}
+      >
+        <CardTitle>{title}</CardTitle>
+      </NavLink>
+
       <CardSubTitle>{dateCreated}</CardSubTitle>
       <CardDescription>{description}</CardDescription>
     </Card>

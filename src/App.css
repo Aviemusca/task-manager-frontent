@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 :root {
-  --project-container-color: #ffffffcc;
+  --project-container-color: #ffffffdd;
   --form-container-color: #ffffff;
 }
 h1,
@@ -16,6 +16,6 @@ h5 {
 }
 
 body {
-  background-image: linear-gradient(to right, #ac2cac40, #25779540, #4c4cd540);
+  background-image: linear-gradient(to right, #ac2cac80, #257795aa, #4c4cd580);
 }
 /*(#ac2cac #257795, #4c4cd5);*/

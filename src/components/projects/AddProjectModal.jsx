@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "semantic-ui-react";
 import { ProjectForm } from "./ProjectForm";
-import { ProjectFormContainer, ProjectFormTitle } from "./ProjectStyles";
+import { CustomFormContainerLg, CustomFormTitle } from "../common/styles";
 
 const AddProjectModal = ({
   handleModalClose,
@@ -16,14 +16,14 @@ const AddProjectModal = ({
       onClose={handleModalClose}
     >
       <Modal.Content>
-        <ProjectFormContainer>
-          <ProjectFormTitle>New Project</ProjectFormTitle>
+        <CustomFormContainerLg>
+          <CustomFormTitle>New Project</CustomFormTitle>
           <ProjectForm
             handleSubmit={(event) => handleSubmit(event)}
             handleInputChange={(event) => handleInputChange(event)}
             newProject={newProject}
           />
-        </ProjectFormContainer>
+        </CustomFormContainerLg>
       </Modal.Content>
       <Modal.Description></Modal.Description>
     </Modal>

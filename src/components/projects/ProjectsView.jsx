@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import axios from "axios";
 
 import ProjectsViewHeader from "./ProjectsViewHeader";
@@ -6,6 +6,8 @@ import ProjectCardList from "./ProjectCardList";
 import AddProjectModal from "./AddProjectModal";
 
 import routes from "../../routes";
+
+import { ProjectsProvider } from "../contexts/ProjectContext";
 
 const axiosOptions = {
   url: routes.api.projects.viewset,
@@ -17,47 +19,41 @@ const axiosOptions = {
   },
 };
 
-class ProjectsView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      projects: [],
-      newProject: {
-        required: false,
-        title: null,
-        description: null,
-      },
-    };
-  }
+function ProjectsView(props) {
+  const [projects, setProjects] = useState([]);
+  const [newProject, setNewProject] = useState({
+    required: false,
+    content: { title: "", description: "" },
+  });
 
-  componentDidMount() {
+  useEffect(() => fetchProjects(), []);
+  useEffect(() => fetchProjects(), [projects.length]);
+
+  const fetchProjects = () => {
     const axiosGetOptions = axiosOptions;
     axiosGetOptions.method = "GET";
 
     axios(axiosGetOptions)
       .then((response) => {
-        this.setState({
-          projects: response.data,
-        });
+        setProjects(response.data);
+        console.log(projects);
       })
       .catch((error) => console.log(error));
-  }
-
-  handleAddProjectInputChange = (event) => {
+  };
+  const handleAddProjectInputChange = (event) => {
     const { name, value } = event.target;
-    const { newProject } = { ...this.state };
-    newProject[name] = value;
-    this.setState({ ...this.state, newProject });
-    console.log(this.state);
+    const project = { ...newProject };
+    project.content[name] = value;
+    setNewProject(project);
   };
 
-  handleAddProjectSubmit = (event) => {
+  const handleAddProjectSubmit = (event) => {
     event.preventDefault();
-    this.handleAddProjectPostRequest();
+    handleProjectPost();
   };
 
-  handleAddProjectPostRequest = () => {
-    const { title, description } = this.state.newProject;
+  const handleProjectPost = () => {
+    const { title, description } = newProject.content;
     const axiosPostOptions = axiosOptions;
     axiosPostOptions.method = "POST";
     axiosPostOptions.data = { title, description };
@@ -65,44 +61,56 @@ class ProjectsView extends Component {
     axios(axiosPostOptions)
       .then(() => {
         console.log("success");
+        handleProjectPostSuccess();
       })
       .catch((error) => console.log(error));
   };
 
-  injectAddProjectModal = () => {
-    const { newProject } = { ...this.state };
+  const handleProjectPostSuccess = () => {
+    const project = { ...newProject };
+    project.required = false;
+    setNewProject(project);
+    setProjects([...projects, newProject.content]);
+  };
+
+  const resetNewProjectContent = () => {
+    const project = { ...newProject };
+    project.content.title = "";
+    project.content.description = "";
+    setNewProject(project);
+  };
+
+  const injectAddProjectModal = () => {
     if (newProject.required)
       return (
         <AddProjectModal
           newProject={newProject}
-          handleModalClose={this.handleAddProjectModalClose}
-          handleSubmit={(event) => this.handleAddProjectSubmit(event)}
-          handleInputChange={(event) => this.handleAddProjectInputChange(event)}
+          handleModalClose={closeAddProjectModal}
+          handleSubmit={(event) => handleAddProjectSubmit(event)}
+          handleInputChange={(event) => handleAddProjectInputChange(event)}
         />
       );
   };
 
-  handleAddProject = () => {
-    const { newProject } = { ...this.state };
-    newProject.required = true;
-    this.setState({ ...this.state, newProject });
+  const handleAddProject = () => {
+    resetNewProjectContent();
+    const project = { ...newProject };
+    project.required = true;
+    setNewProject(project);
   };
 
-  handleAddProjectModalClose = () => {
-    const { newProject } = { ...this.state };
-    newProject.required = false;
-    this.setState({ ...this.state, newProject });
+  const closeAddProjectModal = () => {
+    const project = { ...newProject };
+    project.required = false;
+    setNewProject(project);
   };
-  render() {
-    const { projects, newProject } = this.state;
-    return (
-      <React.Fragment>
-        {this.injectAddProjectModal()}
-        <ProjectsViewHeader handleAddProject={this.handleAddProject} />
-        <ProjectCardList projects={projects} />
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      {injectAddProjectModal()}
+      <ProjectsViewHeader handleAddProject={handleAddProject} />
+      <ProjectCardList projects={projects} />
+    </React.Fragment>
+  );
 }
 
 export default ProjectsView;

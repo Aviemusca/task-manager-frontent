@@ -50,7 +50,7 @@ const Navbar = ({ userCredentials, setUserCredentials }) => {
 
   const injectProjectsLinkItem = () => {
     if (isAuthenticated())
-      return injectMenuLinkItem("Projects", routes.pages.projects);
+      return injectMenuLinkItem("Projects", routes.pages.projects.list);
   };
   return (
     <div className="bg-gradient">

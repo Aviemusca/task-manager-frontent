@@ -1,35 +1,31 @@
 import React from "react";
 import { Form, Button } from "semantic-ui-react";
 
-export const ProjectForm = ({
-  handleInputChange,
-  handleSubmit,
-  newProject,
-}) => {
-  const { title, description } = newProject;
+export const GroupForm = ({ onSubmit, onInputChange, newGroup }) => {
+  const { title, description } = newGroup;
   return (
-    <Form onSubmit={(event) => handleSubmit(event)}>
+    <Form onSubmit={(event) => onSubmit(event)}>
       <Form.Input
         novalidate
         label="Title"
         type="text"
         name="title"
-        placeholder="Enter a project title"
+        placeholder="Enter a task group title"
         value={title}
-        onChange={(event) => handleInputChange(event)}
+        onChange={(event) => onInputChange(event)}
         required
       />
       <Form.TextArea
         label="Description"
         type="text"
         name="description"
-        placeholder="Enter a project description"
+        placeholder="Enter a task group description"
         value={description}
-        onChange={(event) => handleInputChange(event)}
+        onChange={(event) => onInputChange(event)}
         required
       />
       <Button type="submit" primary>
-        Add Project
+        Add Group
       </Button>
     </Form>
   );

@@ -1,9 +1,7 @@
 import React from "react";
 
 import { Header, HeaderTitle } from "./ProjectStyles";
-import { Button, Modal } from "semantic-ui-react";
-import { ProjectForm } from "./ProjectForm";
-import axios from "axios";
+import { Button } from "semantic-ui-react";
 
 const ProjectsViewHeader = ({ handleAddProject }) => {
   return (
