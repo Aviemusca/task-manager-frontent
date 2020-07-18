@@ -1,4 +1,4 @@
-import React, { Component, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 
@@ -23,57 +23,52 @@ const axiosOptions = {
   },
 };
 
-class ProjectDetailView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      project: {},
-      groups: [],
-      redirect: null,
-      deleteProject: false,
-      newGroup: {
-        required: false,
-        content: {
-          title: "",
-          description: "",
-        },
-      },
-    };
-  }
-  componentDidMount = () => {
-    const { project } = this.props.location.state;
-    if (Object.values(project).every((item) => !item)) this.fetchProject();
-    this.setState({ ...this.state, project });
-    this.fetchGroups();
+function ProjectDetailView(props) {
+  const initialProject = props.location.state.project;
+  const initialNewGroup = {
+    required: false,
+    content: {
+      title: "",
+      description: "",
+    },
   };
-  fetchProject = () => {
-    const { projectSlug } = this.props.match.params;
+  const [project, setProject] = useState(initialProject);
+  const [groups, setGroups] = useState([]);
+  const [redirect, setRedirect] = useState(null);
+  const [deleteProject, setDeleteProject] = useState(false);
+  const [newGroup, setNewGroup] = useState(initialNewGroup);
+  const { projectSlug } = props.match.params;
+
+  useEffect(() => {
+    if (Object.values(project).every((item) => !item)) fetchProject();
+  }, []);
+
+  useEffect(() => fetchGroups(), []);
+
+  const fetchProject = () => {
     const axiosGetOptions = axiosOptions;
     axiosGetOptions.method = "GET";
     axiosGetOptions.url = routes.api.projects.detail(projectSlug);
 
     axios(axiosGetOptions)
       .then((response) => {
-        this.setState({ ...this.state, project: response.data });
+        setProject(response.data);
       })
       .catch((error) => console.log(error));
   };
-  fetchGroups = () => {
-    const { projectSlug } = this.props.match.params;
+  const fetchGroups = () => {
     const axiosGetOptions = axiosOptions;
     axiosGetOptions.method = "GET";
     axiosGetOptions.url = routes.api.groups.viewset(projectSlug);
 
     axios(axiosGetOptions)
       .then((response) => {
-        this.setState({ ...this.state, groups: response.data });
-        console.log(this.state);
+        setGroups(response.data);
       })
       .catch((error) => console.log(error));
   };
 
-  handleDeleteProject = () => {
-    const { projectSlug } = this.props.match.params;
+  const handleDeleteProject = () => {
     const axiosGetOptions = axiosOptions;
     axiosGetOptions.method = "DELETE";
     axiosGetOptions.url = routes.api.projects.detail(projectSlug);
@@ -81,111 +76,103 @@ class ProjectDetailView extends Component {
     axios(axiosGetOptions).catch((error) => console.log(error));
   };
 
-  onDeleteProject = () => {
-    this.handleDeleteProject();
-    this.setState({ redirect: routes.pages.projects.list });
-  };
-  injectRedirectProjects = () => {
-    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
+  const onDeleteProject = () => {
+    handleDeleteProject();
+    setRedirect(routes.pages.projects.list);
   };
 
-  injectDeleteProjectModal = () => {
-    const { deleteProject } = { ...this.state };
+  const injectRedirectProjects = () => {
+    if (redirect) return <Redirect to={redirect} />;
+  };
+
+  const injectDeleteProjectModal = () => {
     if (deleteProject)
       return (
         <DeleteProjectModal
-          onModalClose={this.closeDeleteProjectModal}
-          onDeleteProject={this.onDeleteProject}
+          onModalClose={closeDeleteProjectModal}
+          onDeleteProject={onDeleteProject}
           deleteProject={deleteProject}
         />
       );
   };
-  injectAddGroupModal = () => {
-    const { newGroup } = { ...this.state };
+  const injectAddGroupModal = () => {
     if (newGroup.required)
       return (
         <AddGroupModal
-          onModalClose={this.closeModal(newGroup)}
-          onSubmit={this.handleGroupSubmit}
-          onInputChange={this.handleGroupInputChange}
+          onModalClose={closeAddGroupModal}
+          onSubmit={handleGroupSubmit}
+          onInputChange={handleGroupInputChange}
           newGroup={newGroup}
         />
       );
   };
-  handleGroupInputChange = (event) => {
+  const handleGroupInputChange = (event) => {
     const { name, value } = event.target;
-    const { newGroup } = { ...this.state };
-    newGroup.content[name] = value;
-    this.setState({ ...this.state, newGroup });
+    const group = { ...newGroup };
+    const content = { ...newGroup.content };
+    content[name] = value;
+    group.content = content;
+    setNewGroup(group);
   };
-  handleGroupSubmit = (event) => {
+  const handleGroupSubmit = (event) => {
     event.preventDefault();
-    this.handleGroupPost();
+    handleGroupPost();
   };
-  handleGroupPost = () => {
+  const handleGroupPost = () => {
     const axiosPostOptions = axiosOptions;
-    const { projectSlug } = this.props.match.params;
     axiosPostOptions.url = routes.api.groups.viewset(projectSlug);
     axiosPostOptions.method = "POST";
-    axiosPostOptions.data = this.state.newGroup.content;
+    axiosPostOptions.data = newGroup.content;
 
     axios(axiosPostOptions)
       .then(() => {
-        this.handleGroupPostSuccess();
+        handleGroupPostSuccess();
       })
       .catch((error) => console.log(error));
   };
 
-  handleGroupPostSuccess = () => {
-    const { groups, newGroup } = this.state;
-    this.setState({ ...this.state, groups: [newGroup.content, ...groups] });
-    this.closeAddGroupModal();
+  const handleGroupPostSuccess = () => {
+    setGroups([newGroup.content, ...groups]);
+    closeAddGroupModal();
   };
-  openDeleteProjectModal = () => {
-    let { deleteProject } = { ...this.state };
-    deleteProject = true;
-    this.setState({ ...this.state, deleteProject });
+  const openDeleteProjectModal = () => {
+    setDeleteProject(true);
   };
 
-  closeDeleteProjectModal = () => {
-    const newState = { ...this.state };
-    newState.deleteProject = false;
-    this.setState(newState);
+  const closeDeleteProjectModal = () => {
+    setDeleteProject(false);
   };
 
-  openAddGroupModal = () => {
-    const { newGroup } = { ...this.state };
-    newGroup.required = true;
-    this.setState({ ...this.state, newGroup });
+  const openAddGroupModal = () => {
+    const group = { ...newGroup };
+    group.required = true;
+    setNewGroup(group);
   };
 
-  closeAddGroupModal = () => {
-    const { newGroup } = { ...this.state };
-    newGroup.required = false;
-    this.setState({ ...this.state, newGroup });
+  const closeAddGroupModal = () => {
+    const group = { ...newGroup };
+    group.required = false;
+    setNewGroup(group);
   };
 
-  render() {
-    const { project, groups } = this.state;
-    return (
-      <ProjectContainer>
-        {this.injectRedirectProjects()}
-        {this.injectDeleteProjectModal()}
-        {this.injectAddGroupModal()}
-        <ProjectHeader>
-          <Header
-            project={project}
-            onDeleteProject={this.openDeleteProjectModal}
-            onAddGroup={this.openAddGroupModal}
-          />
-        </ProjectHeader>
-        <ProjectGrid>
-          <SideBar project={project} />
-          <GroupCardList groups={groups} />
-        </ProjectGrid>
-      </ProjectContainer>
-    );
-  }
+  return (
+    <ProjectContainer>
+      {injectRedirectProjects()}
+      {injectDeleteProjectModal()}
+      {injectAddGroupModal()}
+      <ProjectHeader>
+        <Header
+          project={project}
+          onDeleteProject={openDeleteProjectModal}
+          onAddGroup={openAddGroupModal}
+        />
+      </ProjectHeader>
+      <ProjectGrid>
+        <SideBar project={project} />
+        <GroupCardList groups={groups} />
+      </ProjectGrid>
+    </ProjectContainer>
+  );
 }
 
 Object.assign(ProjectDetailView.prototype, modalMixin);
