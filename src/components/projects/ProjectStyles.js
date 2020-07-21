@@ -7,6 +7,13 @@ export const Card = styled.div`
   background-color: var(--project-container-color);
 `;
 
+export const CardHovered = styled.div`
+  width: 100%;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  background-color: var(--project-container-color);
+  box-shadow: 8px 6px 0px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+`;
 export const CardTitle = styled.h2`
   width: 80%;
   margin: 0 auto;

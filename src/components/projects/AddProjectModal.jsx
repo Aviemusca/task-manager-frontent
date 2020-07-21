@@ -3,26 +3,13 @@ import { Modal } from "semantic-ui-react";
 import { ProjectForm } from "./ProjectForm";
 import { CustomFormContainerLg, CustomFormTitle } from "../common/styles";
 
-const AddProjectModal = ({
-  handleModalClose,
-  handleSubmit,
-  handleInputChange,
-  newProject,
-}) => {
+const AddProjectModal = ({ modalOpen, closeModal }) => {
   return (
-    <Modal
-      dimmer="blurring"
-      open={newProject.required}
-      onClose={handleModalClose}
-    >
+    <Modal open={modalOpen} onClose={closeModal}>
       <Modal.Content>
         <CustomFormContainerLg>
           <CustomFormTitle>New Project</CustomFormTitle>
-          <ProjectForm
-            handleSubmit={(event) => handleSubmit(event)}
-            handleInputChange={(event) => handleInputChange(event)}
-            newProject={newProject}
-          />
+          <ProjectForm closeModal={closeModal} />
         </CustomFormContainerLg>
       </Modal.Content>
       <Modal.Description></Modal.Description>

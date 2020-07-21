@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 
-export const ProjectForm = ({
-  handleInputChange,
-  handleSubmit,
-  newProject,
-}) => {
+import { ProjectsContext } from "../contexts/ProjectsContext";
+
+export const ProjectForm = ({ closeModal }) => {
+  const { newProject, setNewProject, postNewProject } = useContext(
+    ProjectsContext
+  );
   const { title, description } = newProject;
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    const project = { ...newProject };
+    project[name] = value;
+    setNewProject(project);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    postNewProject();
+    closeModal();
+  };
   return (
     <Form onSubmit={(event) => handleSubmit(event)}>
       <Form.Input

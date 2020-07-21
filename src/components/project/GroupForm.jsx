@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 
-export const GroupForm = ({ onSubmit, onInputChange, newGroup }) => {
+import { GroupsContext } from "../contexts/GroupsContext";
+
+export const GroupForm = ({ closeModal, projectSlug }) => {
+  const { newGroup, setNewGroup, postNewGroup } = useContext(GroupsContext);
+
   const { title, description } = newGroup;
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    const group = { ...newGroup };
+    group[name] = value;
+    setNewGroup(group);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    postNewGroup(projectSlug);
+    closeModal();
+  };
   return (
-    <Form onSubmit={(event) => onSubmit(event)}>
+    <Form onSubmit={(event) => handleSubmit(event)}>
       <Form.Input
         novalidate
         label="Title"
@@ -12,7 +29,7 @@ export const GroupForm = ({ onSubmit, onInputChange, newGroup }) => {
         name="title"
         placeholder="Enter a task group title"
         value={title}
-        onChange={(event) => onInputChange(event)}
+        onChange={(event) => handleInputChange(event)}
         required
       />
       <Form.TextArea
@@ -21,7 +38,7 @@ export const GroupForm = ({ onSubmit, onInputChange, newGroup }) => {
         name="description"
         placeholder="Enter a task group description"
         value={description}
-        onChange={(event) => onInputChange(event)}
+        onChange={(event) => handleInputChange(event)}
         required
       />
       <Button type="submit" primary>

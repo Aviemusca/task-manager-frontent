@@ -17,7 +17,12 @@ const urlWrapper = (left, right) => {
   return wrapperFunction;
 };
 
+// Expects project slug as argument
 const groupUrlWrapper = urlWrapper(baseServerProjectsUrl, "/groups/viewset/");
+
+// Expects project slug and group pk as arguments
+const groupDetail = (projectSlug, groupPk) =>
+  `${groupUrlWrapper(projectSlug)}${groupPk}/`;
 
 const routes = {
   pages: {
@@ -42,6 +47,7 @@ const routes = {
     },
     groups: {
       viewset: groupUrlWrapper,
+      detail: groupDetail,
     },
     tasks: {},
   },

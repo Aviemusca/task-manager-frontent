@@ -4,10 +4,8 @@ import { BrowserRouter, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import HomeView from "./components/HomeView";
 import AboutView from "./components/AboutView";
-
 import LoginView from "./components/auth/LoginView";
 import SignUpView from "./components/auth/SignUpView";
-
 import ProjectsView from "./components/projects/ProjectsView";
 import ProjectDetailView from "./components/project/ProjectDetailView";
 
@@ -15,15 +13,18 @@ import routes from "./routes";
 
 import "./App.css";
 import { AppContainer } from "./AppStyles";
-import { ProjectsProvider } from "./components/contexts/ProjectContext";
 
-const initialCredentials = {
-  username: localStorage.getItem("taskManagerAuthenticationUsername"),
-  token: localStorage.getItem("taskManagerAuthenticationToken"),
-  permissionLevel: localStorage.getItem("taskManagerAuthenticationPermissions"),
-};
+import { ProjectsProvider } from "./components/contexts/ProjectsContext";
+import { GroupsProvider } from "./components/contexts/GroupsContext";
 
 function App(props) {
+  const initialCredentials = {
+    username: localStorage.getItem("taskManagerAuthenticationUsername"),
+    token: localStorage.getItem("taskManagerAuthenticationToken"),
+    permissionLevel: localStorage.getItem(
+      "taskManagerAuthenticationPermissions"
+    ),
+  };
   const [userCredentials, setUserCredentials] = useState(initialCredentials);
   return (
     <React.Fragment>
@@ -43,16 +44,18 @@ function App(props) {
                 <ProjectsView {...props} userCredentials={userCredentials} />
               )}
             />
-            <Route
-              exact
-              path={routes.pages.projects.detail(":projectSlug")}
-              render={(props) => (
-                <ProjectDetailView
-                  {...props}
-                  userCredentials={userCredentials}
-                />
-              )}
-            />
+            <GroupsProvider>
+              <Route
+                exact
+                path={routes.pages.projects.detail(":projectSlug")}
+                render={(props) => (
+                  <ProjectDetailView
+                    {...props}
+                    userCredentials={userCredentials}
+                  />
+                )}
+              />
+            </GroupsProvider>
           </ProjectsProvider>
           <Route
             exact

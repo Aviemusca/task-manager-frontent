@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import ProjectCard from "./ProjectCard";
 
 import { CardGrid } from "./ProjectStyles";
+import { ProjectsContext } from "../contexts/ProjectsContext";
 
-const ProjectCardList = ({ projects }) => {
+const ProjectCardList = () => {
+  const { projects } = useContext(ProjectsContext);
   return (
     <CardGrid>
       {projects.map((project) => (
