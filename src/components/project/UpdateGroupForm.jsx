@@ -3,23 +3,22 @@ import { Form, Button } from "semantic-ui-react";
 
 import { GroupsContext } from "../contexts/GroupsContext";
 
-export const GroupForm = ({ closeModal, projectSlug }) => {
-  const emptyGroup = { title: "", description: "", projectSlug };
-  const { postGroup } = React.useContext(GroupsContext);
-  const [newGroup, setNewGroup] = React.useState(emptyGroup);
+export const UpdateGroupForm = ({ closeModal, group }) => {
+  const { patchGroup } = React.useContext(GroupsContext);
+  const [patchedGroup, setPatchedGroup] = React.useState(group);
 
-  const { title, description } = newGroup;
+  const { title, description } = { ...patchedGroup };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    const group = { ...newGroup };
-    group[name] = value;
-    setNewGroup(group);
+    const newGroup = { ...patchedGroup };
+    newGroup[name] = value;
+    setPatchedGroup(newGroup);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    postGroup(newGroup, setNewGroup);
+    patchGroup(patchedGroup);
     closeModal();
   };
   return (
@@ -29,7 +28,6 @@ export const GroupForm = ({ closeModal, projectSlug }) => {
         label="Title"
         type="text"
         name="title"
-        placeholder="Enter a task group title"
         value={title}
         onChange={(event) => handleInputChange(event)}
         required
@@ -38,13 +36,12 @@ export const GroupForm = ({ closeModal, projectSlug }) => {
         label="Description"
         type="text"
         name="description"
-        placeholder="Enter a task group description"
         value={description}
         onChange={(event) => handleInputChange(event)}
         required
       />
       <Button type="submit" primary>
-        Add Group
+        Update
       </Button>
     </Form>
   );
