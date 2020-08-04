@@ -3,8 +3,6 @@ import { Button, Modal } from "semantic-ui-react";
 
 import { GroupsContext } from "../contexts/GroupsContext";
 
-import routes from "../../routes";
-
 const DeleteGroupModal = ({ modalOpen, closeModal, group }) => {
   const { deleteGroup } = useContext(GroupsContext);
 

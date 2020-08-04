@@ -16,6 +16,7 @@ import { AppContainer } from "./AppStyles";
 
 import { ProjectsProvider } from "./components/contexts/ProjectsContext";
 import { GroupsProvider } from "./components/contexts/GroupsContext";
+import { TasksProvider } from "./components/contexts/TasksContext";
 
 function App(props) {
   const initialCredentials = {
@@ -45,16 +46,18 @@ function App(props) {
               )}
             />
             <GroupsProvider>
-              <Route
-                exact
-                path={routes.pages.projects.detail(":projectSlug")}
-                render={(props) => (
-                  <ProjectDetailView
-                    {...props}
-                    userCredentials={userCredentials}
-                  />
-                )}
-              />
+              <TasksProvider>
+                <Route
+                  exact
+                  path={routes.pages.projects.detail(":projectSlug")}
+                  render={(props) => (
+                    <ProjectDetailView
+                      {...props}
+                      userCredentials={userCredentials}
+                    />
+                  )}
+                />
+              </TasksProvider>
             </GroupsProvider>
           </ProjectsProvider>
           <Route

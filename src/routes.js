@@ -24,6 +24,15 @@ const groupUrlWrapper = urlWrapper(baseServerProjectsUrl, "/groups/viewset/");
 const groupDetail = (projectSlug, groupPk) =>
   `${groupUrlWrapper(projectSlug)}${groupPk}/`;
 
+const taskUrlWrapper = (projectSlug, groupPk) => {
+  const baseGroupUrl = urlWrapper(baseServerProjectsUrl, "/groups/");
+  const baseTaskUrl = urlWrapper(baseGroupUrl(projectSlug), "/tasks/viewset/");
+  return baseTaskUrl(groupPk);
+};
+
+const taskDetail = (projectSlug, groupPk, taskPk) =>
+  `${taskUrlWrapper(projectSlug, groupPk)}${taskPk}/`;
+
 const routes = {
   pages: {
     home: "/",
@@ -49,7 +58,10 @@ const routes = {
       viewset: groupUrlWrapper,
       detail: groupDetail,
     },
-    tasks: {},
+    tasks: {
+      viewset: taskUrlWrapper,
+      detail: taskDetail,
+    },
   },
 };
 

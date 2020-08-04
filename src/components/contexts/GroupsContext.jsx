@@ -12,6 +12,7 @@ function GroupsProvider(props) {
   const [groups, setGroups] = React.useState([]);
 
   const fetchGroups = (projectSlug) => {
+    console.log(routes.api.tasks.viewset(projectSlug, 10));
     axios
       .get(routes.api.groups.viewset(projectSlug), axiosHeaders)
       .then((response) => {

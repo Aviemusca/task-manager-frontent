@@ -10,7 +10,6 @@ import AddGroupModal from "./AddGroupModal";
 import { GroupsContext } from "../contexts/GroupsContext";
 
 const Header = ({ project }) => {
-  const { resetNewGroup } = useContext(GroupsContext);
   const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useState(false);
   const [addGroupModalOpen, setAddGroupModalOpen] = useState(false);
   const [redirect, setRedirect] = useState("");
@@ -43,7 +42,6 @@ const Header = ({ project }) => {
       );
   };
   const handleAddGroup = () => {
-    resetNewGroup();
     setAddGroupModalOpen(true);
   };
   return (
