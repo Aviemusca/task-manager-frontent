@@ -61,23 +61,7 @@ const Navbar = ({ userCredentials, setUserCredentials }) => {
           {injectMenuLinkItem("About", routes.pages.about)}
           {injectMenuLinkItem("Contact", routes.pages.contact)}
           {injectProjectsLinkItem()}
-          <Dropdown item simple text="Projects">
-            <Dropdown.Menu>
-              <Dropdown.Item>List Item</Dropdown.Item>
-              <Dropdown.Item>List Item</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Header>Header Item</Dropdown.Header>
-              <Dropdown.Item>
-                <i className="dropdown icon" />
-                <span className="text">Submenu</span>
-                <Dropdown.Menu>
-                  <Dropdown.Item>List Item</Dropdown.Item>
-                  <Dropdown.Item>List Item</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown.Item>
-              <Dropdown.Item>List Item</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+
           {injectAuthenticationMenuItems()}
         </Container>
       </Menu>

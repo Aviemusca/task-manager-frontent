@@ -19,19 +19,6 @@ export const ProjectGrid = styled.div`
   grid-gap: 2em;
 `;
 
-export const SideBarContainer = styled.div`
-  width: 100%;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  border: solid 1px #ccc;
-  border-radius: 5px;
-  background-color: var(--project-container-color);
-`;
-
-export const SideBarTitle = styled.h2`
-  width: 80%;
-`;
-
 export const Card = styled.div`
   width: 100%;
   border: solid 1px #ccc;
