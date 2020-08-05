@@ -2,11 +2,11 @@ import React from "react";
 import { List } from "semantic-ui-react";
 import Task from "./Task";
 
-const TaskListContainer = ({ tasks }) => {
-  return <TaskList tasks={tasks} />;
+const TaskListContainer = ({ tasks, setTasks }) => {
+  return <TaskList tasks={tasks} setTasks={setTasks} />;
 };
 
-const TaskList = ({ tasks }) => {
+const TaskList = ({ tasks, setTasks }) => {
   return (
     <List animated divided selection verticalAlign="middle">
       {tasks.map((task) => {
@@ -14,7 +14,7 @@ const TaskList = ({ tasks }) => {
           <List.Item key={task.id}>
             <List.Content>
               <List.Header>
-                <Task tsk={task} />
+                <Task tsk={task} tasks={tasks} setTasks={setTasks} />
               </List.Header>
             </List.Content>
           </List.Item>

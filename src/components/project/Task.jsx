@@ -22,7 +22,7 @@ const Container = styled.div`
   text-align: center;
 `;
 
-const TaskContainer = ({ tsk }) => {
+const TaskContainer = ({ tsk, tasks, setTasks }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [priorityColor, setPriorityColor] = React.useState([]);
@@ -43,6 +43,8 @@ const TaskContainer = ({ tsk }) => {
       <Task
         task={task}
         setTask={setTask}
+        tasks={tasks}
+        setTasks={setTasks}
         modalOpen={modalOpen}
         closeModal={closeModal}
         priorityColor={priorityColor}
@@ -55,6 +57,8 @@ const TaskContainer = ({ tsk }) => {
 const Task = ({
   task,
   setTask,
+  tasks,
+  setTasks,
   modalOpen,
   closeModal,
   priorityColor,
@@ -69,6 +73,8 @@ const Task = ({
         <TaskModal
           task={task}
           setTask={setTask}
+          tasks={tasks}
+          setTasks={setTasks}
           open={modalOpen}
           closeModal={closeModal}
         />

@@ -1,25 +1,29 @@
 import React from "react";
 import axios from "axios";
+import { DateTimeInput } from "semantic-ui-calendar-react";
+import { Modal, Icon, Form, Button } from "semantic-ui-react";
+
 import routes from "../../routes";
 import { axiosHeaders } from "../../axiosOptions";
-import { Modal, Radio, Form, Button } from "semantic-ui-react";
+import moment from "moment";
 import { CustomFormContainerLg } from "../common/styles";
 
-const TaskModalContainer = ({ task, setTask, open, closeModal }) => {
+const TaskModalContainer = ({
+  task,
+  setTask,
+  tasks,
+  setTasks,
+  open,
+  closeModal,
+}) => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const newTask = { ...task };
     newTask[name] = value;
     setTask(newTask);
   };
-
-  const handleStateChange = (event, { value }) => {
-    setTask({ ...task, state: parseInt(value) });
-  };
-
-  const handlePriorityChange = (event, { value }) => {
-    setTask({ ...task, priority: parseInt(value) });
-  };
+  const handleDeadlineChange = (event, { name, value }) =>
+    setTask({ ...task, deadline: value });
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -37,6 +41,17 @@ const TaskModalContainer = ({ task, setTask, open, closeModal }) => {
       .then((response) => setTask(response.data))
       .catch((error) => console.log(error));
   };
+  const deleteTask = () => {
+    axios
+      .delete(
+        routes.api.tasks.detail(task.projectSlug, task.groupId, task.id),
+        axiosHeaders
+      )
+      .then(() => {
+        setTasks(tasks.filter((tsk) => tsk.id !== task.id));
+      })
+      .catch((error) => console.log(error));
+  };
 
   return (
     <TaskModal
@@ -45,8 +60,8 @@ const TaskModalContainer = ({ task, setTask, open, closeModal }) => {
       task={task}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}
-      handleStateChange={handleStateChange}
-      handlePriorityChange={handlePriorityChange}
+      handleDeadlineChange={handleDeadlineChange}
+      onDelete={deleteTask}
     />
   );
 };
@@ -57,8 +72,8 @@ const TaskModal = ({
   task,
   handleSubmit,
   handleInputChange,
-  handleStateChange,
-  handlePriorityChange,
+  handleDeadlineChange,
+  onDelete,
 }) => {
   const states = ["No Progress", "In Progress", "Completed"];
   return (
@@ -90,27 +105,48 @@ const TaskModal = ({
               min={1}
               max={10}
               name="priority"
-              onChange={handlePriorityChange}
+              onChange={handleInputChange}
               step={1}
               type="range"
               value={task.priority}
             />
-            <Form.Group inline>
-              <label>State</label>
-              {states.map((state, index) => {
-                return (
-                  <Form.Field
-                    control={Radio}
-                    label={state}
-                    value={index}
-                    checked={task.state === index}
-                    onChange={handleStateChange}
-                  />
-                );
-              })}
-            </Form.Group>
+            <Form.Input
+              label={`Difficulty: ${task.difficulty} `}
+              min={1}
+              max={10}
+              name="difficulty"
+              onChange={handleInputChange}
+              step={1}
+              type="range"
+              value={task.difficulty}
+            />
+            <Form.Input
+              label={`State: ${states[task.state]} `}
+              min={0}
+              max={2}
+              name="state"
+              onChange={handleInputChange}
+              step={1}
+              type="range"
+              value={task.state}
+            />
+
+            <DateTimeInput
+              label="Deadline"
+              name="deadline"
+              iconPosition="left"
+              dateFormat="YYYY-MM-DD"
+              timeFormat="24"
+              placeholder="Select a deadline"
+              value={task.deadline}
+              onChange={handleDeadlineChange}
+            />
             <Button type="submit" primary>
               Update Task
+            </Button>
+
+            <Button negative onClick={onDelete}>
+              Delete Task
             </Button>
           </CustomFormContainerLg>
         </Form>

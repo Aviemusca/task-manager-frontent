@@ -134,7 +134,6 @@ const GroupCardContainer = ({ group }) => {
   };
 
   const handleSubmit = (event) => {
-    console.log("here");
     event.preventDefault();
     postTask();
   };
@@ -152,12 +151,12 @@ const GroupCardContainer = ({ group }) => {
       })
       .catch((error) => console.log(error));
   };
+
   return (
     <Card>
       <Header
         onMouseOver={() => setShowEditButtons(true)}
         onMouseLeave={() => setShowEditButtons(false)}
-        style={{ transition: "1s" }}
       >
         <Title>{title}</Title>
         {injectEditGroupButtons()}
@@ -170,7 +169,7 @@ const GroupCardContainer = ({ group }) => {
       >
         {injectAddTask()}
       </AddTask>
-      <TaskList tasks={tasks} />
+      <TaskList tasks={tasks} setTasks={setTasks} />
     </Card>
   );
 };
