@@ -9,15 +9,22 @@ import { TasksContext } from "../contexts/TasksContext";
 
 import { ProjectContainer, ProjectGrid, ProjectHeader } from "./Styles";
 
-function ProjectDetailView(props) {
+const ProjectDetailViewContainer = (props) => {
   const { projectSlug } = props.match.params;
   const { projects } = useContext(ProjectsContext);
-  const { tasks, setTasks } = useContext(TasksContext);
+  const { getProjectTasks } = useContext(TasksContext);
 
   const project = props.location.state
     ? props.location.state.project
     : projects.find((project) => project.slug === projectSlug);
 
+  React.useEffect(() => {
+    getProjectTasks(project.slug);
+  }, []);
+  return <ProjectDetailView project={project} />;
+};
+
+const ProjectDetailView = ({ project }) => {
   return (
     <ProjectContainer>
       <ProjectHeader>
@@ -29,6 +36,6 @@ function ProjectDetailView(props) {
       </ProjectGrid>
     </ProjectContainer>
   );
-}
+};
 
-export default ProjectDetailView;
+export default ProjectDetailViewContainer;

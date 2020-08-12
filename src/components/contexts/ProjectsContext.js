@@ -1,8 +1,9 @@
 import React, { useState, useEffect, createContext } from "react";
 import axios from "axios";
 
-import axiosOptions from "../../axiosOptions";
+import axiosOptions, { axiosHeaders } from "../../axiosOptions";
 import routes from "../../routes";
+import { replaceItem } from "../../utils/arrays";
 
 const ProjectsContext = createContext();
 
@@ -56,6 +57,21 @@ function ProjectsProvider(props) {
       .catch((error) => console.log(error));
   };
 
+  const patchProject = (project) => {
+    axios
+      .patch(routes.api.projects.detail(project.slug), project, axiosHeaders)
+      .then((response) => handlePatchSuccess(response.data))
+      .catch((error) => console.log(error));
+  };
+
+  const handlePatchSuccess = (patchedProject) => {
+    const patchedIndex = projects.findIndex(
+      (project) => project.id === patchedProject.id
+    );
+    const newProjects = replaceItem(projects, patchedProject, patchedIndex);
+    setProjects(newProjects);
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -66,6 +82,7 @@ function ProjectsProvider(props) {
         resetNewProject,
         fetchProjects,
         postNewProject,
+        patchProject,
         deleteProject,
       }}
     >

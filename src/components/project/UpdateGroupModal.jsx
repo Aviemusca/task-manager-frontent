@@ -3,9 +3,9 @@ import { Modal } from "semantic-ui-react";
 import { UpdateGroupForm } from "./UpdateGroupForm";
 import { CustomFormContainerLg, CustomFormTitle } from "../common/styles";
 
-const UpdateGroupModal = ({ modalOpen, closeModal, group }) => {
+const UpdateGroupModal = ({ closeModal, group }) => {
   return (
-    <Modal dimmer="blurring" open={modalOpen} onClose={closeModal}>
+    <Modal open onClose={closeModal}>
       <Modal.Content>
         <CustomFormContainerLg>
           <CustomFormTitle>Edit Task Group</CustomFormTitle>

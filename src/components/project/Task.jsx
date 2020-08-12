@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import TaskModal from "./TaskModal";
+import { GroupsContext } from "../contexts/GroupsContext";
 import { getPriorityColor, getStateColor } from "../../taskOptions";
 
 const Container = styled.div`
@@ -22,7 +23,7 @@ const Container = styled.div`
   text-align: center;
 `;
 
-const TaskContainer = ({ tsk }) => {
+const TaskContainer = ({ tsk, onProgressChange }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [priorityColor, setPriorityColor] = React.useState([]);
@@ -47,6 +48,7 @@ const TaskContainer = ({ tsk }) => {
         closeModal={closeModal}
         priorityColor={priorityColor}
         stateColor={stateColor}
+        onProgressChange={onProgressChange}
       />
     </div>
   );
@@ -59,6 +61,7 @@ const Task = ({
   closeModal,
   priorityColor,
   stateColor,
+  onProgressChange,
 }) => {
   return (
     <div>
@@ -71,6 +74,7 @@ const Task = ({
           setTask={setTask}
           open={modalOpen}
           closeModal={closeModal}
+          onProgressChange={onProgressChange}
         />
       )}
     </div>
