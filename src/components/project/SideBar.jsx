@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Dropdown, Menu } from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
+import { ProgressBar } from "../common/progressBar";
 import { SideBarTaskList } from "./TaskList";
 
 const Container = styled.div`
@@ -22,10 +23,16 @@ const ProjectSideBar = ({ project }) => {
   return (
     <Container>
       <Title>Task Manager</Title>
+      <ProjectProgressBar />
       Order by <TaskOrderWidgetContainer project={project} />
       <SideBarTaskList project={project} />
     </Container>
   );
+};
+
+const ProjectProgressBar = () => {
+  const { projectTasks } = React.useContext(TasksContext);
+  return <ProgressBar items={projectTasks} />;
 };
 
 const TaskOrderWidgetContainer = ({ project }) => {
