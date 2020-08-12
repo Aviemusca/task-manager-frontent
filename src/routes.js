@@ -11,6 +11,12 @@ const serverProjectDetailUrl = (projectSlug) =>
 const clientProjectDetailUrl = (projectSlug) =>
   `${routes.pages.projects.list}${projectSlug}/`;
 
+const projectTasksViewsetUrl = (projectSlug) =>
+  `${baseServerProjectsUrl}${projectSlug}/tasks/project-task-viewset/`;
+
+const projectTasksDetailUrl = (projectSlug, taskId) =>
+  `${baseServerProjectsUrl}${projectSlug}/tasks/project-task-viewset/${taskId}/`;
+
 const urlWrapper = (left, right) => {
   // partial to wrap a middle arg and form endpoint urls
   const wrapperFunction = (middle) => left + middle + right;
@@ -61,6 +67,8 @@ const routes = {
     tasks: {
       viewset: taskUrlWrapper,
       detail: taskDetail,
+      projectViewset: projectTasksViewsetUrl,
+      projectDetail: projectTasksDetailUrl,
     },
   },
 };

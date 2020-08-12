@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 
 import { axiosHeaders } from "../../axiosOptions";
+import { replaceItem } from "../../utils/arrays";
 import routes from "../../routes";
 
 const TasksContext = React.createContext();
@@ -9,37 +10,36 @@ const TasksContext = React.createContext();
 function TasksProvider(props) {
   // Provider for the tasks of a given project
   const emptyTask = { title: "", description: "" };
-  const [tasks, setTasks] = React.useState([]);
+  const [projectTasks, setProjectTasks] = React.useState([]);
 
-  const getTasks = (group) => {
+  const getProjectTasks = (projectSlug) => {
     axios
-      .get(routes.api.tasks.viewset(group.projectSlug, group.id), axiosHeaders)
+      .get(routes.api.tasks.projectViewset(projectSlug), axiosHeaders)
       .then((response) => {
-        setTasks(response.data);
+        setProjectTasks(response.data);
       })
       .catch((error) => console.log(error));
   };
 
-  const postTask = (newTask, setNewTask) => {
+  const postTask = (newTask) => {
     axios
       .post(
-        routes.api.tasks.viewset(newTask.projectSlug, newTask.groupId),
+        routes.api.tasks.projectViewset(newTask.projectSlug),
         newTask,
         axiosHeaders
       )
-      .then((response) => handlePostSuccess(response.data, setNewTask))
+      .then((response) => handlePostSuccess(response.data))
       .catch((error) => console.log(error));
   };
 
-  const handlePostSuccess = (newTask, setNewTask) => {
-    setTasks([...tasks, newTask]);
-    setNewTask(emptyTask);
+  const handlePostSuccess = (newTask) => {
+    setProjectTasks([...projectTasks, newTask]);
   };
 
   const patchTask = (task) => {
     axios
       .patch(
-        routes.api.tasks.detail(task.projectSlug, task.groupId, task.id),
+        routes.api.tasks.projectDetail(task.projectSlug, task.id),
         task,
         axiosHeaders
       )
@@ -48,23 +48,21 @@ function TasksProvider(props) {
   };
 
   const handlePatchSuccess = (patchedTask) => {
-    const patchedIndex = tasks.findIndex((task) => task.id === patchedTask.id);
-    const newTasks = [
-      ...tasks.slice(0, patchedIndex),
-      patchedTask,
-      ...tasks.slice(patchedIndex + 1),
-    ];
-    setTasks(newTasks);
+    const patchedIndex = projectTasks.findIndex(
+      (task) => task.id === patchedTask.id
+    );
+    const newTasks = replaceItem(projectTasks, patchedTask, patchedIndex);
+    setProjectTasks(newTasks);
   };
 
   const deleteTask = (task) => {
     axios
       .delete(
-        routes.api.tasks.detail(task.projectSlug, task.groupId, task.id),
+        routes.api.tasks.projectDetail(task.projectSlug, task.id),
         axiosHeaders
       )
       .then(() => {
-        setTasks(tasks.filter((tsk) => tsk.id !== task.id));
+        setProjectTasks(projectTasks.filter((tsk) => tsk.id !== task.id));
       })
       .catch((error) => console.log(error));
   };
@@ -72,9 +70,9 @@ function TasksProvider(props) {
   return (
     <TasksContext.Provider
       value={{
-        tasks,
-        setTasks,
-        getTasks,
+        projectTasks,
+        setProjectTasks,
+        getProjectTasks,
         postTask,
         patchTask,
         deleteTask,

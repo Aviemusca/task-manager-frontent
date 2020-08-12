@@ -1,9 +1,11 @@
 import React from "react";
 import { Button, Icon, Form } from "semantic-ui-react";
 import styled from "styled-components";
+import { ProgressBar } from "../common/progressBar";
 import UpdateGroupModal from "./UpdateGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
-import TaskList from "./TaskList";
+import { GroupTaskList } from "./TaskList";
+import { TasksContext } from "../contexts/TasksContext";
 import { axiosHeaders } from "../../axiosOptions";
 import axios from "axios";
 import routes from "../../routes";
@@ -38,139 +40,209 @@ const CardDescription = styled.div`
   margin: 0 auto;
 `;
 
-const AddTask = styled.div``;
+const AddTaskStyle = styled.div``;
 
 const GroupCardContainer = ({ group }) => {
-  const { title, dateCreated, description } = group;
-  const [showEditButtons, setShowEditButtons] = React.useState(false);
-  const [editGroupMode, setEditGroupMode] = React.useState(false);
+  const [showOptions, setShowOptions] = React.useState(false);
+  const [editMode, setEditMode] = React.useState(false);
   const [deleteMode, setDeleteMode] = React.useState(false);
+  const [progress, setProgress] = React.useState(group.completion);
 
-  const emptyTask = { title: "", description: "" };
-  const [showAddTask, setShowAddTask] = React.useState(false);
-  const [tasks, setTasks] = React.useState([]);
-  const [newTask, setNewTask] = React.useState(emptyTask);
-
-  React.useEffect(() => {
-    getTasks();
-  }, []);
-
-  const getTasks = () => {
-    axios
-      .get(routes.api.tasks.viewset(group.projectSlug, group.id), axiosHeaders)
-      .then((response) => setTasks(response.data))
-      .catch((error) => console.log(error));
+  const state = {
+    modes: {
+      editMode,
+      deleteMode,
+    },
+    showOptions,
+    progress,
+    group,
   };
 
-  const injectEditGroupButtons = () => {
-    if (showEditButtons)
-      return (
-        <span>
-          <Button
-            icon
-            background="transparent"
-            size="mini"
-            onClick={() => setEditGroupMode(true)}
-          >
-            <Icon name="edit" />
-          </Button>
-          <Button
-            icon
-            inverted
-            color="red"
-            background="transparent"
-            size="mini"
-            onClick={() => setDeleteMode(true)}
-          >
-            <Icon name="trash" />
-          </Button>
-        </span>
-      );
+  const setState = {
+    setModes: {
+      setEditMode,
+      setDeleteMode,
+    },
+    setShowOptions,
   };
 
-  const injectUpdateGroupModal = () => {
-    if (editGroupMode)
-      return (
-        <UpdateGroupModal
-          modalOpen={editGroupMode}
-          closeModal={() => setEditGroupMode(false)}
-          group={group}
-        />
-      );
+  const handlers = {
+    //  handleProgressChange,
   };
-  const injectDeleteGroupModal = () => {
-    if (deleteMode)
-      return (
+
+  return <GroupCard state={state} setState={setState} handlers={handlers} />;
+};
+
+const GroupCard = ({ state, setState, handlers }) => {
+  return (
+    <Card>
+      <GroupHeader state={state} setState={setState} />
+      <GroupModals state={state} setState={setState} />
+      <GroupProgressBar group={state.group} />
+      <AddTaskContainer group={state.group} />
+      <GroupTaskList
+        group={state.group}
+        onProgressChange={handlers.handleProgressChange}
+      />
+    </Card>
+  );
+};
+
+const GroupProgressBar = ({ group }) => {
+  const { projectTasks } = React.useContext(TasksContext);
+
+  return (
+    <ProgressBar
+      items={projectTasks.filter((task) => task.groupId === group.id)}
+    />
+  );
+};
+
+const GroupHeader = ({ state, setState }) => {
+  const { showOptions, group } = state;
+  const { setShowOptions, setModes } = setState;
+  return (
+    <Header
+      onMouseOver={() => setShowOptions(true)}
+      onMouseLeave={() => setShowOptions(false)}
+    >
+      <Title>{group.title}</Title>
+      {showOptions && <OptionButtons setModes={setModes} />}
+    </Header>
+  );
+};
+
+const GroupModals = ({ state, setState }) => {
+  const { modes, group } = state;
+  const { editMode, deleteMode } = modes;
+  const { setEditMode, setDeleteMode } = setState.setModes;
+  return (
+    <React.Fragment>
+      {editMode && (
+        <UpdateGroupModal closeModal={() => setEditMode(false)} group={group} />
+      )}
+      {deleteMode && (
         <DeleteGroupModal
           modalOpen={deleteMode}
           closeModal={() => setDeleteMode(false)}
           group={group}
         />
-      );
+      )}
+    </React.Fragment>
+  );
+};
+
+const OptionButtons = ({ setModes }) => {
+  const { setEditMode, setDeleteMode } = setModes;
+  return (
+    <span>
+      <EditButton setEditMode={setEditMode} />
+      <DeleteButton setDeleteMode={setDeleteMode} />
+    </span>
+  );
+};
+
+const EditButton = ({ setEditMode }) => {
+  return (
+    <Button
+      icon
+      background="transparent"
+      size="mini"
+      onClick={() => setEditMode(true)}
+    >
+      <Icon name="edit" />
+    </Button>
+  );
+};
+
+const DeleteButton = ({ setDeleteMode }) => {
+  return (
+    <Button
+      icon
+      inverted
+      color="red"
+      background="transparent"
+      size="mini"
+      onClick={() => setDeleteMode(true)}
+    >
+      <Icon name="trash" />
+    </Button>
+  );
+};
+
+const AddTaskContainer = ({ group }) => {
+  const emptyTask = {
+    title: "",
+    description: "",
+    projectSlug: group.projectSlug,
+    group: group.id,
   };
-  const injectAddTask = () => {
-    return showAddTask ? (
-      <Form onSubmit={handleSubmit}>
-        <Form.Field>
-          <input
-            placeholder="Add a new task"
-            name="title"
-            value={newTask.title}
-            onChange={handleInputChange}
-          />
-        </Form.Field>
-      </Form>
-    ) : (
-      <div style={{ textAlign: "center", transition: "2s" }}>
-        <Icon name="chevron down" />
-      </div>
-    );
-  };
-  const handleInputChange = (event) => {
+  const { postTask } = React.useContext(TasksContext);
+  const [showAddTask, setShowAddTask] = React.useState(false);
+  const [newTask, setNewTask] = React.useState(emptyTask);
+
+  const handleChange = (event) => {
     const { name, value } = event.target;
     const task = { ...newTask };
     task[name] = value;
     setNewTask(task);
   };
 
-  const handleSubmit = (event) => {
+  async function handleSubmit(event) {
     event.preventDefault();
-    postTask();
-  };
+    await postTask(newTask);
+    setNewTask(emptyTask);
+  }
 
-  const postTask = () => {
-    axios
-      .post(
-        routes.api.tasks.viewset(group.projectSlug, group.id),
-        newTask,
-        axiosHeaders
-      )
-      .then((response) => {
-        setTasks([...tasks, response.data]);
-        setNewTask(emptyTask);
-      })
-      .catch((error) => console.log(error));
+  const handlers = {
+    change: handleChange,
+    submit: handleSubmit,
   };
-
   return (
-    <Card>
-      <Header
-        onMouseOver={() => setShowEditButtons(true)}
-        onMouseLeave={() => setShowEditButtons(false)}
-      >
-        <Title>{title}</Title>
-        {injectEditGroupButtons()}
-      </Header>
-      {injectUpdateGroupModal()}
-      {injectDeleteGroupModal()}
-      <AddTask
-        onClick={() => setShowAddTask(true)}
-        onMouseLeave={() => setShowAddTask(false)}
-      >
-        {injectAddTask()}
-      </AddTask>
-      <TaskList tasks={tasks} setTasks={setTasks} />
-    </Card>
+    <AddTask
+      showAddTask={showAddTask}
+      setShowAddTask={setShowAddTask}
+      task={newTask}
+      handlers={handlers}
+    />
+  );
+};
+
+const AddTask = ({ showAddTask, setShowAddTask, task, handlers }) => {
+  return (
+    <AddTaskStyle
+      onClick={() => setShowAddTask(true)}
+      onMouseLeave={() => setShowAddTask(false)}
+    >
+      {showAddTask ? (
+        <AddTaskForm task={task} handlers={handlers} />
+      ) : (
+        <AddTaskChevron />
+      )}
+    </AddTaskStyle>
+  );
+};
+
+const AddTaskForm = ({ task, handlers }) => {
+  return (
+    <Form onSubmit={handlers.submit}>
+      <Form.Field>
+        <input
+          placeholder="Add a new task"
+          name="title"
+          value={task.title}
+          onChange={handlers.change}
+        />
+      </Form.Field>
+    </Form>
+  );
+};
+
+const AddTaskChevron = () => {
+  return (
+    <div style={{ textAlign: "center", transition: "2s" }}>
+      <Icon name="chevron down" />
+    </div>
   );
 };
 
