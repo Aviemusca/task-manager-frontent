@@ -1,6 +1,5 @@
 import React from "react";
 import { Progress } from "semantic-ui-react";
-import { TasksContext } from "../contexts/TasksContext";
 
 const ProgressBarContainer = ({ items }) => {
   // Requires that items (array) have a state property (2 => complete)

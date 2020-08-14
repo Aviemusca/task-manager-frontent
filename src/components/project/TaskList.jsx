@@ -1,29 +1,51 @@
 import React from "react";
-import { List } from "semantic-ui-react";
+import { List, Button, Icon } from "semantic-ui-react";
 import Task from "./Task";
 import { TasksContext } from "../contexts/TasksContext";
 
-const GroupTaskListContainer = ({ group, onProgressChange }) => {
+const GroupTaskListContainer = ({ group }) => {
   const { projectTasks } = React.useContext(TasksContext);
+
   return (
-    <TaskList
+    <TaskListContainer
       tasks={projectTasks.filter((task) => task.groupId === group.id)}
-      onProgressChange={onProgressChange}
     />
   );
 };
 
-const SideBarTaskListContainer = ({ project }) => {
-  const { projectTasks, getProjectTasks } = React.useContext(TasksContext);
-  React.useEffect(() => {
-    getProjectTasks();
-    console.log("here");
-  }, [project.taskOrder]);
-
+const SideBarTaskListContainer = () => {
+  const { projectTasks } = React.useContext(TasksContext);
   return <TaskList tasks={projectTasks} />;
 };
 
-const TaskList = ({ tasks, onProgressChange }) => {
+const TaskListContainer = ({ tasks }) => {
+  const [showTasks, setShowTasks] = React.useState(false);
+
+  const handleToggle = () => setShowTasks(!showTasks);
+
+  return showTasks ? (
+    <React.Fragment>
+      <div style={{ textAlign: "center" }}>
+        <Button basic size="mini" circular onClick={handleToggle}>
+          <Button.Content visible>
+            <Icon name="angle double up" />
+          </Button.Content>
+        </Button>
+      </div>
+      <TaskList tasks={tasks} />
+    </React.Fragment>
+  ) : (
+    <div style={{ textAlign: "center" }}>
+      <Button basic size="mini" circular onClick={handleToggle}>
+        <Button.Content visible>
+          <Icon name="ellipsis vertical" />
+        </Button.Content>
+      </Button>
+    </div>
+  );
+};
+
+const TaskList = ({ tasks }) => {
   return (
     <List animated divided selection verticalAlign="middle">
       {tasks.map((task) => {
@@ -31,7 +53,7 @@ const TaskList = ({ tasks, onProgressChange }) => {
           <List.Item key={task.id}>
             <List.Content>
               <List.Header>
-                <Task tsk={task} onProgressChange={onProgressChange} />
+                <Task tsk={task} />
               </List.Header>
             </List.Content>
           </List.Item>
