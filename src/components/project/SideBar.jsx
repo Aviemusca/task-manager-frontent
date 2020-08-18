@@ -22,7 +22,7 @@ const Title = styled.h2`
 const ProjectSideBar = ({ project }) => {
   return (
     <Container>
-      <Title>Task Manager</Title>
+      <Title>Project Manager</Title>
       <ProjectProgressBar />
       Order by <TaskOrderWidgetContainer project={project} />
       <SideBarTaskList project={project} />

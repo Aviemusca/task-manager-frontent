@@ -9,6 +9,17 @@ const getPriorityColor = (level) => {
   return [r, g, b, a];
 };
 
+const getDifficultyColor = (level) => {
+  // returns the color of the difficulty level, yellow -> red from low -> high
+  // assumes level starts at 1
+  const steps = 9;
+  const r = Math.floor(255 * ((level - 1) / steps));
+  const g = Math.floor(255 * (1 - (level - 1) / steps));
+  const b = 0;
+  const a = 0.7;
+  return [r, g, b, a];
+};
+
 const getStateColor = (level) => {
   // returns the color of the task state level, blue -> green from no progress -> complete
   // assumes level starts at 0
@@ -20,9 +31,9 @@ const getStateColor = (level) => {
   return [r, g, b, a];
 };
 
-const states = {
-  levels: ["No Progress", "In Progress", "Completed"],
+const taskStates = {
+  levels: ["Not Started", "In Progress", "Completed"],
   colors: ["#0000ff", "#0d98ba", "#00ff00"],
 };
 
-export { states, getPriorityColor, getStateColor };
+export { taskStates, getPriorityColor, getDifficultyColor, getStateColor };

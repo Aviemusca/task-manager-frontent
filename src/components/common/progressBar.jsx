@@ -1,5 +1,12 @@
 import React from "react";
+import styled from "styled-components";
 import { Progress } from "semantic-ui-react";
+
+const StyledProgressBar = styled(Progress)`
+  & > .bar {
+    background-color: rgba(${(props) => `${props.color}`}) !important;
+  }
+`;
 
 const ProgressBarContainer = ({ items }) => {
   // Requires that items (array) have a state property (2 => complete)
@@ -25,4 +32,4 @@ const ProgressBar = ({ percent }) => {
   return <Progress percent={percent} progress indicating />;
 };
 
-export { ProgressBarContainer as ProgressBar };
+export { ProgressBarContainer as ProgressBar, StyledProgressBar };
