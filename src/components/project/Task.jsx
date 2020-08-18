@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Card, Popup } from "semantic-ui-react";
+import { Card, Icon, Transition, Popup } from "semantic-ui-react";
 import TaskModal from "./TaskModal";
 import { StyledProgressBar } from "../common/progressBar";
 import {
@@ -44,10 +44,12 @@ const TaskColorBox = styled.span`
 const TaskContainer = ({ tsk }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [expandedTask, setExpandedTask] = React.useState(false);
+  const [deadlineStatus, setDeadlineStatus] = React.useState(0);
   const [priorityColor, setPriorityColor] = React.useState([]);
   const [stateColor, setStateColor] = React.useState([]);
   const [difficultyColor, setDifficultyColor] = React.useState([]);
-  const [expandedTask, setExpandedTask] = React.useState(false);
+  const [deadlineColor, setDeadlineColor] = React.useState([]);
 
   React.useEffect(() => {
     setPriorityColor(getPriorityColor(task.priority));
@@ -70,6 +72,7 @@ const TaskContainer = ({ tsk }) => {
     task,
     modalOpen,
     expandedTask,
+    deadlineStatus,
     colors: {
       priorityColor,
       difficultyColor,
@@ -96,8 +99,66 @@ const TaskContainer = ({ tsk }) => {
   );
 };
 
+const DeadlineWarningContainer = ({ task }) => {
+  const [deadlineStatus, setDeadlineStatus] = React.useState(0);
+  React.useEffect(() => {
+    setDeadlineStatus(getDeadlineStatus(task.deadline));
+  }, [task.deadline, task.state]);
+
+  const getDeadlineStatus = () => {
+    const deadlineDate = new Date(task.deadline);
+    const currentDate = new Date();
+    const difference = deadlineDate - currentDate;
+    if (task.state === 2) return 0;
+    // Passed deadlined
+    if (difference < 0) return 3;
+    // 24 hours till deadline
+    if (difference < 86400000) return 2;
+    // 48 hours till deadline
+    if (difference < 172800000) return 1;
+    return 0;
+  };
+
+  const getDeadlineColor = (level) => {
+    switch (level) {
+      case 0:
+        return null;
+        break;
+      case 1:
+        return "yellow";
+        break;
+      case 2:
+        return "orange";
+        break;
+      case 3:
+        return "red";
+        break;
+      default:
+        throw new Error(`Deadline status level ${level} not recognized`);
+    }
+  };
+  return (
+    <React.Fragment>
+      {task.state !== 2 && (
+        <DeadlineWarning
+          color={getDeadlineColor(deadlineStatus)}
+          visible={task.state !== 2}
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
+const DeadlineWarning = ({ color, visible }) => {
+  return (
+    <Transition visible={visible} animation="flash" duration={5000}>
+      <Icon color={color} name="warning sign" size="large" />
+    </Transition>
+  );
+};
+
 const Task = ({ state, setState }) => {
-  const { task, expandedTask, modalOpen } = state;
+  const { task, expandedTask, modalOpen, deadlineStatus } = state;
   const { priorityColor, difficultyColor, stateColor } = state.colors;
   const { setTask, setExpandedTask } = setState;
   const { closeModal } = setState.setModal;
@@ -110,6 +171,8 @@ const Task = ({ state, setState }) => {
         header={
           <TaskMain>
             <TaskTitle>{task.title}</TaskTitle>
+            <DeadlineWarningContainer task={task} />
+
             <TaskColors>
               <Popup
                 flowing

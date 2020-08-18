@@ -10,7 +10,7 @@ const getPriorityColor = (level) => {
 };
 
 const getDifficultyColor = (level) => {
-  // returns the color of the difficulty level, yellow -> red from low -> high
+  // returns the color of the difficulty level, green -> red from low -> high
   // assumes level starts at 1
   const steps = 9;
   const r = Math.floor(255 * ((level - 1) / steps));
