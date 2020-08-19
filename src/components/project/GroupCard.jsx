@@ -70,12 +70,10 @@ const GroupCardContainer = ({ group }) => {
     setShowOptions,
   };
 
-  const handlers = {};
-
-  return <GroupCard state={state} setState={setState} handlers={handlers} />;
+  return <GroupCard state={state} setState={setState} />;
 };
 
-const GroupCard = ({ state, setState, handlers }) => {
+const GroupCard = ({ state, setState }) => {
   const { setShowOptions } = setState;
   const { setAddTaskMode } = setState.setModes;
   return (

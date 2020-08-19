@@ -7,7 +7,7 @@ import Header from "./Header";
 import { ProjectsContext } from "../contexts/ProjectsContext";
 import { TasksContext } from "../contexts/TasksContext";
 
-const ProjectHeader = styled.div`
+const StyledHeader = styled.div`
   width: 100%;
   margin-top: 2em;
   margin-bottom: 1em;
@@ -18,10 +18,10 @@ const ProjectHeader = styled.div`
 
 export const ProjectGrid = styled.div`
   display: grid;
-  grid-template-columns: 2fr 3fr;
+  grid-template-columns: 1.75fr 3fr;
   grid-template-rows: auto;
   align-items: start;
-  grid-gap: 2em;
+  grid-gap: 6em;
 `;
 
 const ProjectDetailViewContainer = (props) => {
@@ -42,9 +42,9 @@ const ProjectDetailViewContainer = (props) => {
 const ProjectDetailView = ({ project }) => {
   return (
     <div>
-      <ProjectHeader>
+      <StyledHeader>
         <Header project={project} />
-      </ProjectHeader>
+      </StyledHeader>
       <ProjectGrid>
         <SideBar project={project} />
         <GroupCardList project={project} />

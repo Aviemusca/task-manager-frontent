@@ -12,44 +12,79 @@ import { formatDateToString } from "../../utils/dates";
 
 import { taskStates } from "../../taskOptions";
 
-const TaskMain = styled.div`
+const taskStatuses = [
+  {
+    color: "red",
+    iconName: "times circle outline",
+    popupContent: "Not Started",
+  },
+  {
+    color: "blue",
+    iconName: "dot circle outline",
+    popupContent: "In Progress",
+  },
+  {
+    color: "green",
+    iconName: "check circle outline",
+    popupContent: "Completed",
+  },
+];
+
+const taskDeadlines = [
+  { color: "red", popupContent: "Deadline Has Passed!" },
+  { color: "orange", popupContent: "Deadline Under 24h Away!" },
+  { color: "yellow", popupContent: "Deadline Under 48h Away!" },
+];
+
+const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: minmax(2em, 4em);
   overflow: auto;
   padding: 0.25em 0;
+  background: #eee;
+  border-radius: 5px;
 `;
 
-const TaskTitle = styled.div`
+const StyledTitle = styled.div`
   font-size: 1.15em;
   width: 60%;
   color: #333;
 `;
 
-const TaskColors = styled.div`
+const StyledIcons = styled.div`
+  text-align: left;
+  width: 20%;
+`;
+const StyledColorBoxes = styled.div`
   text-align: right;
-  width: 40%;
+  width: 20%;
 `;
 
-const TaskColorBox = styled.span`
+const StyledColorBox = styled.span`
   display: inline-block;
   width: 20px;
   height: 30px;
   margin: 0 5px;
   border-radius: 5px;
+  border: solid 1px #777;
   background: rgba(${(props) => `${props.color}`});
+`;
+
+const SecondaryProgressBarWrapper = styled.span`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const TaskContainer = ({ tsk }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [expandedTask, setExpandedTask] = React.useState(false);
-  const [deadlineStatus, setDeadlineStatus] = React.useState(0);
   const [priorityColor, setPriorityColor] = React.useState([]);
   const [stateColor, setStateColor] = React.useState([]);
   const [difficultyColor, setDifficultyColor] = React.useState([]);
-  const [deadlineColor, setDeadlineColor] = React.useState([]);
 
   React.useEffect(() => {
     setPriorityColor(getPriorityColor(task.priority));
@@ -72,7 +107,6 @@ const TaskContainer = ({ tsk }) => {
     task,
     modalOpen,
     expandedTask,
-    deadlineStatus,
     colors: {
       priorityColor,
       difficultyColor,
@@ -99,67 +133,8 @@ const TaskContainer = ({ tsk }) => {
   );
 };
 
-const DeadlineWarningContainer = ({ task }) => {
-  const [deadlineStatus, setDeadlineStatus] = React.useState(0);
-  React.useEffect(() => {
-    setDeadlineStatus(getDeadlineStatus(task.deadline));
-  }, [task.deadline, task.state]);
-
-  const getDeadlineStatus = () => {
-    const deadlineDate = new Date(task.deadline);
-    const currentDate = new Date();
-    const difference = deadlineDate - currentDate;
-    if (task.state === 2) return 0;
-    // Passed deadlined
-    if (difference < 0) return 3;
-    // 24 hours till deadline
-    if (difference < 86400000) return 2;
-    // 48 hours till deadline
-    if (difference < 172800000) return 1;
-    return 0;
-  };
-
-  const getDeadlineColor = (level) => {
-    switch (level) {
-      case 0:
-        return null;
-        break;
-      case 1:
-        return "yellow";
-        break;
-      case 2:
-        return "orange";
-        break;
-      case 3:
-        return "red";
-        break;
-      default:
-        throw new Error(`Deadline status level ${level} not recognized`);
-    }
-  };
-  return (
-    <React.Fragment>
-      {task.state !== 2 && (
-        <DeadlineWarning
-          color={getDeadlineColor(deadlineStatus)}
-          visible={task.state !== 2}
-        />
-      )}
-    </React.Fragment>
-  );
-};
-
-const DeadlineWarning = ({ color, visible }) => {
-  return (
-    <Transition visible={visible} animation="flash" duration={5000}>
-      <Icon color={color} name="warning sign" size="large" />
-    </Transition>
-  );
-};
-
 const Task = ({ state, setState }) => {
   const { task, expandedTask, modalOpen, deadlineStatus } = state;
-  const { priorityColor, difficultyColor, stateColor } = state.colors;
   const { setTask, setExpandedTask } = setState;
   const { closeModal } = setState.setModal;
 
@@ -168,41 +143,17 @@ const Task = ({ state, setState }) => {
       <Card
         fluid
         onClick={() => setExpandedTask(!expandedTask)}
-        header={
-          <TaskMain>
-            <TaskTitle>{task.title}</TaskTitle>
-            <DeadlineWarningContainer task={task} />
-
-            <TaskColors>
-              <Popup
-                flowing
-                hoverable
-                position="right center"
-                content={`Status (${taskStates.levels[task.state]})`}
-                trigger={<TaskColorBox color={stateColor} />}
-              />
-              <Popup
-                flowing
-                hoverable
-                position="right center"
-                content={`Priority (${task.priority}/10)`}
-                trigger={<TaskColorBox color={priorityColor} />}
-              />
-              <Popup
-                flowing
-                hoverable
-                position="right center"
-                content={`Difficulty (${task.difficulty}/10)`}
-                trigger={<TaskColorBox color={difficultyColor} />}
-              />
-            </TaskColors>
-          </TaskMain>
-        }
+        header={<Header task={task} colors={state.colors} />}
         description={expandedTask && task.description}
         meta={expandedTask && formatDateToString(task.dateCreated)}
         extra={
           expandedTask && (
-            <SecondaryProgressBars task={state.task} colors={state.colors} />
+            <React.Fragment>
+              <div style={{ margin: "0.5em 0" }}>
+                Deadline: {formatDateToString(task.deadline)}
+              </div>
+              <SecondaryProgressBars task={state.task} colors={state.colors} />
+            </React.Fragment>
           )
         }
       />
@@ -217,11 +168,100 @@ const Task = ({ state, setState }) => {
     </React.Fragment>
   );
 };
+const Header = ({ task, colors }) => {
+  const { title, state } = task;
+  return (
+    <StyledHeader>
+      <StyledTitle>{title}</StyledTitle>
+      <StyledIcons>
+        <StatusIcon taskStatus={state} />
+        {state !== 2 && (
+          <DeadlineWarningContainer
+            taskDeadline={task.deadline}
+            taskStatus={state}
+          />
+        )}
+      </StyledIcons>
+      <ColorBoxes task={task} colors={colors} />
+    </StyledHeader>
+  );
+};
 
+const DeadlineWarningContainer = ({ taskDeadline, taskStatus }) => {
+  const [deadlineStatus, setDeadlineStatus] = React.useState(null);
+
+  React.useEffect(() => {
+    setDeadlineStatus(getDeadlineStatus());
+  }, [taskDeadline, taskStatus]);
+
+  const getDeadlineStatus = () => {
+    const deadlineDate = new Date(taskDeadline);
+    const currentDate = new Date();
+    const difference = deadlineDate - currentDate;
+    // Deadline has passed
+    if (difference < 0) return 0;
+    // 24 hours till deadline
+    if (difference < 86400000) return 1;
+    // 48 hours till deadline
+    if (difference < 172800000) return 2;
+    return null;
+  };
+
+  return (
+    <React.Fragment>
+      {deadlineStatus !== null && taskStatus !== 2 && (
+        <DeadlineWarning color={taskDeadlines[deadlineStatus].color} />
+      )}
+    </React.Fragment>
+  );
+};
+
+const DeadlineWarning = ({ color }) => {
+  return <Icon color={color} name="warning sign" size="large" />;
+};
+
+const StatusIcon = ({ taskStatus }) => {
+  const { popupContent, color, iconName } = taskStatuses[taskStatus];
+  return (
+    <Popup
+      content={popupContent}
+      position="right center"
+      trigger={<Icon size="large" name={iconName} color={color} />}
+    />
+  );
+};
+const ColorBoxes = ({ task, colors }) => {
+  const { priorityColor, difficultyColor } = colors;
+  const { priority, difficulty } = task;
+  return (
+    <StyledColorBoxes>
+      <ColorBox
+        color={priorityColor}
+        popupContent={`Priority (${priority}/10)`}
+      />
+      <ColorBox
+        color={difficultyColor}
+        popupContent={`Difficulty (${difficulty}/10)`}
+      />
+    </StyledColorBoxes>
+  );
+};
+
+const ColorBox = ({ popupContent, color }) => {
+  return (
+    <Popup
+      flowing
+      hoverable
+      position="right center"
+      content={popupContent}
+      trigger={<StyledColorBox color={color} />}
+    />
+  );
+};
 const SecondaryProgressBar = ({ color, value, total }) => {
   return (
     <StyledProgressBar
-      style={{ margin: "1em 0" }}
+      style={{ margin: "0.5em 0", flexGrow: "4" }}
       size="small"
       progress="ratio"
       color={color}
@@ -236,13 +276,30 @@ const SecondaryProgressBars = ({ task, colors }) => {
   const { state, priority, difficulty } = task;
   return (
     <React.Fragment>
-      <SecondaryProgressBar color={stateColor} value={state} total="2" />
-      <SecondaryProgressBar color={priorityColor} value={priority} total="10" />
-      <SecondaryProgressBar
-        color={difficultyColor}
-        value={difficulty}
-        total="10"
-      />
+      <SecondaryProgressBarWrapper>
+        <span>Status: &nbsp;</span>
+        <SecondaryProgressBar
+          color={taskStatuses[task.state].color}
+          value={state}
+          total="2"
+        />
+      </SecondaryProgressBarWrapper>
+      <SecondaryProgressBarWrapper>
+        <span>Priority: &nbsp;</span>
+        <SecondaryProgressBar
+          color={priorityColor}
+          value={priority}
+          total="10"
+        />
+      </SecondaryProgressBarWrapper>
+      <SecondaryProgressBarWrapper>
+        <span>Difficulty: &nbsp;</span>
+        <SecondaryProgressBar
+          color={difficultyColor}
+          value={difficulty}
+          total="10"
+        />
+      </SecondaryProgressBarWrapper>
     </React.Fragment>
   );
 };
