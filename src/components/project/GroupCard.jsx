@@ -2,35 +2,12 @@ import React from "react";
 import { Button, Popup, Icon, Form } from "semantic-ui-react";
 import styled from "styled-components";
 import { ProgressBar } from "../common/progressBar";
+import { MiniIconButton } from "../common/buttons";
+import { StyledCard, StyledHeader, StyledTitle } from "../common/styles";
 import UpdateGroupModal from "./UpdateGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
 import { GroupTaskList } from "./TaskList";
 import { TasksContext } from "../contexts/TasksContext";
-
-const Card = styled.div`
-  width: 100%;
-  border: solid 1px #ccc;
-  border-radius: 5px;
-  background-color: var(--project-container-color);
-  padding: 1em;
-  &:hover {
-    box-shadow: 8px 6px 0px 0 rgba(0, 0, 0, 0.3),
-      0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  padding-bottom: 0.5em;
-  border-bottom: solid 1px #bbb;
-`;
-
-const Title = styled.h2`
-  width: 60%;
-  margin-bottom: 0;
-`;
 
 const CardSubTitle = styled.h4`
   text-color: #777;
@@ -77,7 +54,7 @@ const GroupCard = ({ state, setState }) => {
   const { setShowOptions } = setState;
   const { setAddTaskMode } = setState.setModes;
   return (
-    <Card
+    <StyledCard
       onMouseOver={() => setShowOptions(true)}
       onMouseLeave={() => {
         setShowOptions(false);
@@ -89,7 +66,7 @@ const GroupCard = ({ state, setState }) => {
       <GroupProgressBar group={state.group} />
       <AddTaskContainer state={state} setState={setState} />
       <GroupTaskList group={state.group} />
-    </Card>
+    </StyledCard>
   );
 };
 
@@ -106,10 +83,10 @@ const GroupHeader = ({ state, setState }) => {
   const { showOptions, group } = state;
   const { setModes } = setState;
   return (
-    <Header>
-      <Title>{group.title}</Title>
+    <StyledHeader>
+      <StyledTitle>{group.title}</StyledTitle>
       {showOptions && <OptionButtons setModes={setModes} />}
-    </Header>
+    </StyledHeader>
   );
 };
 
@@ -136,67 +113,27 @@ const GroupModals = ({ state, setState }) => {
 const OptionButtons = ({ setModes }) => {
   const { setAddTaskMode, setEditMode, setDeleteMode } = setModes;
   return (
-    <span styles={{ transition: "all 1s ease" }}>
-      <AddTaskButton setAddTaskMode={setAddTaskMode} />
-      <EditButton setEditMode={setEditMode} />
-      <DeleteButton setDeleteMode={setDeleteMode} />
-    </span>
-  );
-};
-
-const AddTaskButton = ({ setAddTaskMode }) => {
-  return (
-    <Popup
-      content="Add a new task"
-      trigger={
-        <Button
-          icon
-          background="transparent"
-          size="mini"
-          onClick={() => setAddTaskMode(true)}
-        >
-          <Icon name="plus" />
-        </Button>
-      }
-    />
-  );
-};
-
-const EditButton = ({ setEditMode }) => {
-  return (
-    <Popup
-      content="Edit task group"
-      trigger={
-        <Button
-          icon
-          background="transparent"
-          size="mini"
-          onClick={() => setEditMode(true)}
-        >
-          <Icon name="edit" />
-        </Button>
-      }
-    />
-  );
-};
-
-const DeleteButton = ({ setDeleteMode }) => {
-  return (
-    <Popup
-      content="Delete task group"
-      trigger={
-        <Button
-          icon
-          inverted
+    <div>
+      <Button.Group size="mini">
+        <MiniIconButton
+          handleClick={() => setAddTaskMode(true)}
+          popupContent={"Add a new Task"}
+          iconName="plus"
+        />
+        <MiniIconButton
+          handleClick={() => setEditMode(true)}
+          popupContent={"Edit Task Group"}
+          iconName="edit"
+        />
+        <MiniIconButton
+          handleClick={() => setDeleteMode(true)}
+          popupContent={"Delete Task Group"}
+          iconName="trash"
           color="red"
-          background="transparent"
-          size="mini"
-          onClick={() => setDeleteMode(true)}
-        >
-          <Icon name="trash" />
-        </Button>
-      }
-    />
+          inverted={true}
+        />
+      </Button.Group>
+    </div>
   );
 };
 

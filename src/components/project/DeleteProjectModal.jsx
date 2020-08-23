@@ -2,29 +2,43 @@ import React, { useContext } from "react";
 import { ProjectsContext } from "../contexts/ProjectsContext";
 import DeleteModal from "../common/deleteModal";
 
+import { Redirect } from "react-router-dom";
 import routes from "../../routes";
 
-const DeleteProjectModal = ({
+const DeleteProjectModalContainer = ({
   modalOpen,
   closeModal,
   projectSlug,
-  setRedirect,
 }) => {
+  const [redirect, setRedirect] = React.useState("");
   const { deleteProject } = useContext(ProjectsContext);
 
-  const handleDeleteProject = () => {
-    deleteProject(projectSlug);
-    closeModal();
+  async function handleDelete() {
+    await deleteProject(projectSlug);
     setRedirect(routes.pages.projects.list);
-  };
+    closeModal();
+  }
+  return (
+    <React.Fragment>
+      {redirect && <Redirect to={redirect} />}
+      <DeleteProjectModal
+        modalOpen={modalOpen}
+        closeModal={closeModal}
+        handleDelete={handleDelete}
+      />
+    </React.Fragment>
+  );
+};
+
+const DeleteProjectModal = ({ modalOpen, closeModal, handleDelete }) => {
   return (
     <DeleteModal
       modalOpen={modalOpen}
       closeModal={closeModal}
       resourceName="project"
-      onDelete={handleDeleteProject}
+      onDelete={handleDelete}
     />
   );
 };
 
-export default DeleteProjectModal;
+export default DeleteProjectModalContainer;
