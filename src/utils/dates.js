@@ -3,4 +3,9 @@ const formatDateToString = (date) => {
   return formattedDate.toDateString();
 };
 
-export { formatDateToString };
+const formatTimeToString = (date) => {
+  const formattedDate = new Date(date);
+  return formattedDate.toTimeString();
+};
+
+export { formatDateToString, formatTimeToString };

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Card, Icon, Transition, Popup } from "semantic-ui-react";
+import { Card, Icon, Popup } from "semantic-ui-react";
 import TaskModal from "./TaskModal";
 import { StyledProgressBar } from "../common/progressBar";
 import {
@@ -8,9 +8,8 @@ import {
   getDifficultyColor,
   getStateColor,
 } from "../../taskOptions";
-import { formatDateToString } from "../../utils/dates";
 
-import { taskStates } from "../../taskOptions";
+import { formatDistanceToNow, format as formatDate } from "date-fns";
 
 const taskStatuses = [
   {
@@ -43,7 +42,7 @@ const StyledHeader = styled.div`
   height: minmax(2em, 4em);
   overflow: auto;
   padding: 0.25em 0;
-  background: #eee;
+  background: #25779515;
   border-radius: 5px;
 `;
 
@@ -78,6 +77,14 @@ const SecondaryProgressBarWrapper = styled.span`
   align-items: center;
 `;
 
+const StyledDate = styled.div`
+  color: #4c4cd5cc;
+  margin: 0.75em 0;
+`;
+
+const StyledProgressTitle = styled.span`
+  color: #777;
+`;
 const TaskContainer = ({ tsk }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -97,6 +104,10 @@ const TaskContainer = ({ tsk }) => {
   React.useEffect(() => {
     setDifficultyColor(getDifficultyColor(task.difficulty));
   }, [task.difficulty]);
+
+  React.useEffect(() => {
+    setTask(tsk);
+  }, [JSON.stringify(tsk)]);
 
   const handleModalOpen = (event) => {
     if (event.ctrlKey) setModalOpen(true);
@@ -145,15 +156,14 @@ const Task = ({ state, setState }) => {
         onClick={() => setExpandedTask(!expandedTask)}
         header={<Header task={task} colors={state.colors} />}
         description={expandedTask && task.description}
-        meta={expandedTask && formatDateToString(task.dateCreated)}
+        meta={
+          expandedTask && (
+            <Dates dateCreated={task.dateCreated} deadline={task.deadline} />
+          )
+        }
         extra={
           expandedTask && (
-            <React.Fragment>
-              <div style={{ margin: "0.5em 0" }}>
-                Deadline: {formatDateToString(task.deadline)}
-              </div>
-              <SecondaryProgressBars task={state.task} colors={state.colors} />
-            </React.Fragment>
+            <SecondaryProgressBars task={state.task} colors={state.colors} />
           )
         }
       />
@@ -166,6 +176,30 @@ const Task = ({ state, setState }) => {
         />
       )}
     </React.Fragment>
+  );
+};
+
+const Dates = ({ dateCreated, deadline }) => {
+  return (
+    <React.Fragment>
+      <DateComponent title="Created" date={dateCreated} />
+      <DateComponent title="Deadline" date={deadline} />
+    </React.Fragment>
+  );
+};
+
+const DateComponent = ({ title, date }) => {
+  const [dateObject, setDateObject] = React.useState(new Date(date));
+  React.useEffect(() => setDateObject(new Date(date)), [date]);
+  return (
+    <Popup
+      content={formatDate(dateObject, "PPPPpppp")}
+      trigger={
+        <StyledDate>
+          {title} {formatDistanceToNow(dateObject, { addSuffix: true })}
+        </StyledDate>
+      }
+    />
   );
 };
 const Header = ({ task, colors }) => {
@@ -210,14 +244,26 @@ const DeadlineWarningContainer = ({ taskDeadline, taskStatus }) => {
   return (
     <React.Fragment>
       {deadlineStatus !== null && taskStatus !== 2 && (
-        <DeadlineWarning color={taskDeadlines[deadlineStatus].color} />
+        <DeadlineWarning deadlineStatus={deadlineStatus} />
       )}
     </React.Fragment>
   );
 };
 
-const DeadlineWarning = ({ color }) => {
-  return <Icon color={color} name="warning sign" size="large" />;
+const DeadlineWarning = ({ deadlineStatus }) => {
+  return (
+    <Popup
+      content={taskDeadlines[deadlineStatus].popupContent}
+      position="right center"
+      trigger={
+        <Icon
+          color={taskDeadlines[deadlineStatus].color}
+          name="warning sign"
+          size="large"
+        />
+      }
+    />
+  );
 };
 
 const StatusIcon = ({ taskStatus }) => {
@@ -277,7 +323,7 @@ const SecondaryProgressBars = ({ task, colors }) => {
   return (
     <React.Fragment>
       <SecondaryProgressBarWrapper>
-        <span>Status: &nbsp;</span>
+        <StyledProgressTitle>Status: &nbsp;</StyledProgressTitle>
         <SecondaryProgressBar
           color={taskStatuses[task.state].color}
           value={state}
@@ -285,7 +331,7 @@ const SecondaryProgressBars = ({ task, colors }) => {
         />
       </SecondaryProgressBarWrapper>
       <SecondaryProgressBarWrapper>
-        <span>Priority: &nbsp;</span>
+        <StyledProgressTitle>Priority: &nbsp;</StyledProgressTitle>
         <SecondaryProgressBar
           color={priorityColor}
           value={priority}
@@ -293,7 +339,7 @@ const SecondaryProgressBars = ({ task, colors }) => {
         />
       </SecondaryProgressBarWrapper>
       <SecondaryProgressBarWrapper>
-        <span>Difficulty: &nbsp;</span>
+        <StyledProgressTitle>Difficulty: &nbsp;</StyledProgressTitle>
         <SecondaryProgressBar
           color={difficultyColor}
           value={difficulty}

@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 import { Popup, Button, Modal } from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
 import { ProgressBar } from "../common/progressBar";
@@ -15,7 +16,13 @@ import { UpdateProjectForm } from "./UpdateProjectForm";
 import DeleteModal from "./DeleteProjectModal";
 import AddGroupModal from "./AddGroupModal";
 import SortModal from "./SortModal";
+import sortOptions from "./sortOptions";
 
+const StyledSortDisplay = styled.div`
+  display: flex;
+  justify-content: space-around;
+  text-color: #777;
+`;
 const SideBarContainer = ({ project }) => {
   const [showOptions, setShowOptions] = React.useState(false);
   const [addGroupMode, setAddGroupMode] = React.useState(false);
@@ -24,6 +31,9 @@ const SideBarContainer = ({ project }) => {
   const [sortMode, setSortMode] = React.useState(false);
   const [filterMode, setFilterMode] = React.useState(false);
   const [archiveMode, setArchiveMode] = React.useState(false);
+  const [sortPropIndices, setSortPropIndices] = React.useState(
+    sortOptions.map((item) => 0)
+  );
 
   const state = {
     modes: {
@@ -35,6 +45,7 @@ const SideBarContainer = ({ project }) => {
       archiveMode,
     },
     showOptions,
+    sortPropIndices,
     project,
   };
 
@@ -48,11 +59,12 @@ const SideBarContainer = ({ project }) => {
       setArchiveMode,
     },
     setShowOptions,
+    setSortPropIndices,
   };
   return <SideBar state={state} setState={setState} />;
 };
 const SideBar = ({ state, setState }) => {
-  const { project } = state;
+  const { project, sortPropIndices } = state;
   const { setShowOptions, setModes } = setState;
   const { setAddGroupMode } = setState.setModes;
 
@@ -68,6 +80,7 @@ const SideBar = ({ state, setState }) => {
       <Modals state={state} setState={setState} />
       <ProjectProgressBar />
       <TaskOptionButtons setModes={setModes} />
+      <SortOrderBreadcrumbs sortPropIndices={sortPropIndices} />
       <SideBarTaskList project={project} />
     </StyledCard>
   );
@@ -82,7 +95,7 @@ const Header = ({ setModes }) => {
   );
 };
 const Modals = ({ state, setState }) => {
-  const { modes, project } = state;
+  const { modes, project, sortPropIndices } = state;
   const { addGroupMode, editMode, deleteMode, sortMode } = modes;
   const {
     setAddGroupMode,
@@ -117,6 +130,8 @@ const Modals = ({ state, setState }) => {
           modalOpen={sortMode}
           closeModal={() => setSortMode(false)}
           project={project}
+          sortPropIndices={sortPropIndices}
+          setSortPropIndices={setState.setSortPropIndices}
         />
       )}
     </React.Fragment>
@@ -195,6 +210,23 @@ const ProjectProgressBar = () => {
       hoverable
       content="Here"
     />
+  );
+};
+
+const SortOrderBreadcrumbs = ({ sortPropIndices }) => {
+  const [sections, setSections] = React.useState([]);
+  React.useEffect(() => {
+    setSections(
+      sortPropIndices.map((item) => sortOptions[item].formParams.name)
+    );
+  }, JSON.stringify(sortPropIndices));
+
+  return (
+    <StyledSortDisplay>
+      {sections.map((section) => (
+        <div>{section}</div>
+      ))}
+    </StyledSortDisplay>
   );
 };
 

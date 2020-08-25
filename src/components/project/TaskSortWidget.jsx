@@ -1,83 +1,44 @@
 import React from "react";
 import { TasksContext } from "../contexts/TasksContext";
-import { Dropdown, Menu } from "semantic-ui-react";
+import { Dropdown, Icon, Checkbox } from "semantic-ui-react";
+import styled from "styled-components";
+import sortOptions from "./sortOptions";
 
+const StyledSortWidget = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
+const StyledSortOrderToggle = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
 const arraySort = require("array-sort");
 
-const compareNumbers = (prop, direction) => (a, b) =>
-  !direction.reverse ? a[prop] - b[prop] : b[prop] - a[prop];
-
-const compareDates = (prop, direction) => (a, b) =>
-  !direction.reverse
-    ? new Date(a[prop]) - new Date(b[prop])
-    : new Date(b[prop]) - new Date(a[prop]);
-
-const sortOptions = [
-  {
-    formParams: {
-      name: "Date Created",
-      defaultFirst: "Old",
-      defaultLast: "New",
-    },
-    prop: "dateCreated",
-    compareFunc: compareDates,
-    reverse: false,
-  },
-  {
-    formParams: {
-      name: "Priority",
-      defaultFirst: "Low",
-      defaultLast: "High",
-    },
-    prop: "priority",
-    compareFunc: compareNumbers,
-    reverse: false,
-  },
-  {
-    formParams: {
-      name: "Difficulty",
-      defaultFirst: "Easy",
-      defaultLast: "Challenging",
-    },
-    prop: "difficulty",
-    compareFunc: compareNumbers,
-    reverse: false,
-  },
-  {
-    formParams: {
-      name: "Deadline",
-      defaultFirst: "Soon",
-      defaultLast: "Later",
-    },
-    prop: "deadline",
-    compareFunc: compareDates,
-    reverse: false,
-  },
-];
-
-const TaskSortWidgetContainer = ({ project }) => {
+const SortWidgetsContainer = ({ sortPropIndices, setSortPropIndices }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
-  const [sortProps, setSortProps] = React.useState(
-    sortOptions.map((item, index) => {
-      return item;
-    })
-  );
-  const [sortByIndices, setSortByIndices] = React.useState(
-    sortOptions.map((item) => 0)
-  );
+  const [sortProps, setSortProps] = React.useState([]);
+
+  React.useEffect(() => {
+    setSortProps(
+      sortOptions.map((item, index, array) => array[sortPropIndices[index]])
+    );
+  }, [JSON.stringify(sortPropIndices)]);
+
   React.useEffect(() => {
     sortProjectTasks();
-  }, [...projectTasks.map((item) => item.priority)]);
+  }, [JSON.stringify(sortProps)]);
 
-  async function handleSortChange(widget, sortByIndex) {
-    const newSortByIndices = [...sortByIndices];
-    newSortByIndices[widget] = sortByIndex;
-    await setSortByIndices(newSortByIndices);
-    await setSortProps(
-      sortOptions.map((item, index, array) => array[sortByIndices[index]])
-    );
-    sortProjectTasks();
+  async function handleSortChange(widget, sortPropIndex) {
+    const newSortPropIndices = [...sortPropIndices];
+    newSortPropIndices[widget] = sortPropIndex;
+    setSortPropIndices(newSortPropIndices);
   }
+
+  const handleReverseToggle = (widget) => {
+    const newSortProps = [...sortProps];
+    newSortProps[widget].reverse = !newSortProps[widget].reverse;
+    setSortProps(newSortProps);
+  };
 
   const sortProjectTasks = () => {
     const newTasks = [...projectTasks];
@@ -92,38 +53,49 @@ const TaskSortWidgetContainer = ({ project }) => {
     setProjectTasks(newTasks);
   };
   return sortProps.map((item, index) => (
-    <DropDownWidget
-      values={sortOptions.map((item) => item.formParams.name)}
-      currentIndex={sortByIndices[index]}
-      onIndexChange={handleSortChange}
-      currentWidget={index}
-    />
+    <StyledSortWidget>
+      <DropDownWidget currentWidget={index} handleChange={handleSortChange} />
+      <OrderToggle
+        defaultFirst={item.formParams.defaultFirst}
+        defaultLast={item.formParams.defaultLast}
+        reverse={item.reverse}
+        handleChange={() => handleReverseToggle(index)}
+      />
+    </StyledSortWidget>
   ));
 };
 
-const DropDownWidget = ({
-  values,
-  currentIndex,
-  currentWidget,
-  onIndexChange,
-}) => {
+const DropDownWidget = ({ currentWidget, handleChange }) => {
+  const options = sortOptions.map((item, index) => {
+    return { key: index, text: item.formParams.name, value: index };
+  });
+
+  const placeholder = currentWidget === 0 ? "Sort By" : "Then By";
   return (
-    <Menu compact>
-      <Dropdown item simple text={values[currentIndex]}>
-        <Dropdown.Menu>
-          {values.map((value, index) => {
-            return (
-              <Dropdown.Item
-                onClick={() => onIndexChange(currentWidget, index)}
-              >
-                {value}
-              </Dropdown.Item>
-            );
-          })}
-        </Dropdown.Menu>
-      </Dropdown>
-    </Menu>
+    <Dropdown
+      selection
+      placeholder={placeholder}
+      options={options}
+      onChange={(event, { value }) => handleChange(currentWidget, value)}
+    />
   );
 };
 
-export default TaskSortWidgetContainer;
+const OrderToggle = ({ defaultFirst, defaultLast, reverse, handleChange }) => {
+  return (
+    <StyledSortOrderToggle>
+      <div>
+        {defaultFirst}
+        <Icon name="arrow right" />
+        {defaultLast}
+      </div>
+      <Checkbox toggle checked={reverse} onChange={handleChange} />
+      <div>
+        {defaultLast}
+        <Icon name="arrow right" />
+        {defaultFirst}
+      </div>
+    </StyledSortOrderToggle>
+  );
+};
+export default SortWidgetsContainer;
