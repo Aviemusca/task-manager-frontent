@@ -5,7 +5,6 @@ import TaskSortWidget from "./TaskSortWidget";
 const SortModalContainer = ({
   modalOpen,
   closeModal,
-  project,
   sortPropIndices,
   setSortPropIndices,
 }) => {
@@ -13,7 +12,6 @@ const SortModalContainer = ({
     <SortModal
       modalOpen={modalOpen}
       closeModal={closeModal}
-      project={project}
       sortPropIndices={sortPropIndices}
       setSortPropIndices={setSortPropIndices}
     />
@@ -23,15 +21,13 @@ const SortModalContainer = ({
 const SortModal = ({
   modalOpen,
   closeModal,
-  project,
   sortPropIndices,
   setSortPropIndices,
 }) => {
   return (
-    <Modal open={modalOpen} onClose={closeModal}>
+    <Modal open={modalOpen} onClose={closeModal} closeIcon>
       <Modal.Content>
         <TaskSortWidget
-          project={project}
           sortPropIndices={sortPropIndices}
           setSortPropIndices={setSortPropIndices}
         />

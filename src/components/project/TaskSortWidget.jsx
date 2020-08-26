@@ -1,20 +1,11 @@
 import React from "react";
 import { TasksContext } from "../contexts/TasksContext";
-import { Dropdown, Icon, Checkbox } from "semantic-ui-react";
-import styled from "styled-components";
+import { Dropdown, Icon, Checkbox, Popup, Table } from "semantic-ui-react";
 import sortOptions from "./sortOptions";
 
-const StyledSortWidget = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-const StyledSortOrderToggle = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
 const arraySort = require("array-sort");
 
-const SortWidgetsContainer = ({ sortPropIndices, setSortPropIndices }) => {
+const SortTableContainer = ({ sortPropIndices, setSortPropIndices }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
   const [sortProps, setSortProps] = React.useState([]);
 
@@ -28,11 +19,11 @@ const SortWidgetsContainer = ({ sortPropIndices, setSortPropIndices }) => {
     sortProjectTasks();
   }, [JSON.stringify(sortProps)]);
 
-  async function handleSortChange(widget, sortPropIndex) {
+  const handleSortChange = (widget, sortPropIndex) => {
     const newSortPropIndices = [...sortPropIndices];
     newSortPropIndices[widget] = sortPropIndex;
     setSortPropIndices(newSortPropIndices);
-  }
+  };
 
   const handleReverseToggle = (widget) => {
     const newSortProps = [...sortProps];
@@ -52,50 +43,115 @@ const SortWidgetsContainer = ({ sortPropIndices, setSortPropIndices }) => {
     );
     setProjectTasks(newTasks);
   };
-  return sortProps.map((item, index) => (
-    <StyledSortWidget>
-      <DropDownWidget currentWidget={index} handleChange={handleSortChange} />
-      <OrderToggle
-        defaultFirst={item.formParams.defaultFirst}
-        defaultLast={item.formParams.defaultLast}
-        reverse={item.reverse}
-        handleChange={() => handleReverseToggle(index)}
-      />
-    </StyledSortWidget>
-  ));
+  return (
+    <SortTable
+      sortProps={sortProps}
+      handleSortChange={handleSortChange}
+      handleReverseToggle={handleReverseToggle}
+    />
+  );
+  };
+
+const SortTable = ({ sortProps, handleSortChange, handleReverseToggle }) => {
+  return (
+    <Table definition>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell />
+          <Table.HeaderCell>Task Property</Table.HeaderCell>
+          <Table.HeaderCell>Sort Direction</Table.HeaderCell>
+          <Table.HeaderCell>Toggle Direction</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {sortProps.map((item, index) => (
+          <SortRow
+            key={index}
+            sortProp={item}
+            row={index}
+            handleSortChange={handleSortChange}
+            handleReverseToggle={handleReverseToggle}
+          />
+        ))}
+      </Table.Body>
+    </Table>
+  );
 };
 
-const DropDownWidget = ({ currentWidget, handleChange }) => {
+const SortRow = ({ sortProp, row, handleSortChange, handleReverseToggle }) => {
+  const [rowName, setRowName] = React.useState("");
+  const { defaultFirst, defaultLast } = sortProp.formParams;
+  const { reverse } = sortProp;
+  const sortByPopup = [
+    "Sort by 1st property",
+    "When 1st properties are equal, sort by 2nd property",
+    "When 1st and 2nd properties are equal, sort by 3rd property",
+    "When 1st, 2nd and 3rd properties are equal, sort by 4th property",
+  ];
+  React.useEffect(() => {
+    row === 0 ? setRowName("Sort By") : setRowName("Then By");
+  }, []);
+
+  return (
+    <Table.Row>
+      <Popup
+        content={sortByPopup[row]}
+        trigger={<Table.Cell>{rowName}</Table.Cell>}
+      />
+      <Table.Cell>
+        <DropDownWidget row={row} handleChange={handleSortChange} />{" "}
+      </Table.Cell>
+      <Table.Cell>
+        <SortDirection
+          defaultFirst={defaultFirst}
+          defaultLast={defaultLast}
+          reversed={reverse}
+        />
+      </Table.Cell>
+      <Table.Cell>
+        <ToggleDirection
+          row={row}
+          reverse={reverse}
+          handleChange={handleReverseToggle}
+        />
+      </Table.Cell>
+    </Table.Row>
+  );
+};
+const DropDownWidget = ({ row, handleChange }) => {
   const options = sortOptions.map((item, index) => {
     return { key: index, text: item.formParams.name, value: index };
   });
 
-  const placeholder = currentWidget === 0 ? "Sort By" : "Then By";
   return (
     <Dropdown
       selection
-      placeholder={placeholder}
+      placeholder={options[row].text}
       options={options}
-      onChange={(event, { value }) => handleChange(currentWidget, value)}
+      onChange={(event, { value }) => handleChange(row, value)}
     />
   );
 };
 
-const OrderToggle = ({ defaultFirst, defaultLast, reverse, handleChange }) => {
-  return (
-    <StyledSortOrderToggle>
-      <div>
-        {defaultFirst}
-        <Icon name="arrow right" />
-        {defaultLast}
-      </div>
-      <Checkbox toggle checked={reverse} onChange={handleChange} />
-      <div>
-        {defaultLast}
-        <Icon name="arrow right" />
-        {defaultFirst}
-      </div>
-    </StyledSortOrderToggle>
+const SortDirection = ({ defaultFirst, defaultLast, reversed }) => {
+  return !reversed ? (
+    <div>
+      {defaultFirst}
+      <Icon name="right arrow" />
+      {defaultLast}
+    </div>
+  ) : (
+    <div>
+      {defaultLast}
+      <Icon name="right arrow" />
+      {defaultFirst}
+    </div>
   );
 };
-export default SortWidgetsContainer;
+const ToggleDirection = ({ row, reverse, handleChange }) => {
+  return (
+    <Checkbox toggle checked={reverse} onChange={() => handleChange(row)} />
+  );
+};
+
+export default SortTableContainer;

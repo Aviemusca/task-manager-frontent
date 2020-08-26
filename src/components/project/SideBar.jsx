@@ -31,8 +31,9 @@ const SideBarContainer = ({ project }) => {
   const [sortMode, setSortMode] = React.useState(false);
   const [filterMode, setFilterMode] = React.useState(false);
   const [archiveMode, setArchiveMode] = React.useState(false);
+  const [sortProps, setSortProps] = React.useState([]);
   const [sortPropIndices, setSortPropIndices] = React.useState(
-    sortOptions.map((item) => 0)
+    sortOptions.map((item, index) => index)
   );
 
   const state = {
@@ -45,6 +46,7 @@ const SideBarContainer = ({ project }) => {
       archiveMode,
     },
     showOptions,
+    sortProps,
     sortPropIndices,
     project,
   };
@@ -59,6 +61,7 @@ const SideBarContainer = ({ project }) => {
       setArchiveMode,
     },
     setShowOptions,
+    setSortProps,
     setSortPropIndices,
   };
   return <SideBar state={state} setState={setState} />;
@@ -95,7 +98,7 @@ const Header = ({ setModes }) => {
   );
 };
 const Modals = ({ state, setState }) => {
-  const { modes, project, sortPropIndices } = state;
+  const { modes, project, sortPropIndices, sortProps } = state;
   const { addGroupMode, editMode, deleteMode, sortMode } = modes;
   const {
     setAddGroupMode,
@@ -130,6 +133,8 @@ const Modals = ({ state, setState }) => {
           modalOpen={sortMode}
           closeModal={() => setSortMode(false)}
           project={project}
+          sortProps={sortProps}
+          setSortProps={setState.setSortProps}
           sortPropIndices={sortPropIndices}
           setSortPropIndices={setState.setSortPropIndices}
         />
