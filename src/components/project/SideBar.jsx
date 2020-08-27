@@ -1,112 +1,251 @@
 import React from "react";
 import styled from "styled-components";
-import { Dropdown, Menu } from "semantic-ui-react";
+import { Popup, Button, Modal } from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
+import { ProgressBar } from "../common/progressBar";
+import {
+  StyledCard,
+  StyledHeader,
+  StyledTitle,
+  CustomFormContainerLg,
+  CustomFormTitle,
+} from "../common/styles";
+import { MiniIconButton } from "../common/buttons";
 import { SideBarTaskList } from "./TaskList";
+import { UpdateProjectForm } from "./UpdateProjectForm";
+import DeleteModal from "./DeleteProjectModal";
+import AddGroupModal from "./AddGroupModal";
+import SortModal from "./SortModal";
+import sortOptions from "./sortOptions";
+import filterOptions from "./filterOptions";
+import FilterModal from "./FilterModal";
 
-const Container = styled.div`
-  width: 100%;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  border: solid 1px #ccc;
-  border-radius: 5px;
-  background-color: var(--project-container-color);
+const StyledSortDisplay = styled.div`
+  display: flex;
+  justify-content: space-around;
+  text-color: #777;
 `;
+const SideBarContainer = ({ project }) => {
+  const [showOptions, setShowOptions] = React.useState(false);
+  const [addGroupMode, setAddGroupMode] = React.useState(false);
+  const [editMode, setEditMode] = React.useState(false);
+  const [deleteMode, setDeleteMode] = React.useState(false);
+  const [sortMode, setSortMode] = React.useState(false);
+  const [filterMode, setFilterMode] = React.useState(false);
+  const [archiveMode, setArchiveMode] = React.useState(false);
+  const [sortProps, setSortProps] = React.useState([]);
+  const [sortPropIndices, setSortPropIndices] = React.useState(
+    sortOptions.map((item, index) => index)
+  );
+  const [filterProps, setFilterProps] = React.useState(
+    JSON.parse(JSON.stringify(filterOptions))
+  );
 
-const Title = styled.h2`
-  padding: 0.5em 1em;
-  text-align: center;
-`;
+  const state = {
+    modes: {
+      addGroupMode,
+      editMode,
+      deleteMode,
+      sortMode,
+      filterMode,
+      archiveMode,
+    },
+    showOptions,
+    sortProps,
+    sortPropIndices,
+    filterProps,
+    project,
+  };
 
-const ProjectSideBar = ({ project }) => {
+  const setState = {
+    setModes: {
+      setAddGroupMode,
+      setEditMode,
+      setDeleteMode,
+      setSortMode,
+      setFilterMode,
+      setArchiveMode,
+    },
+    setShowOptions,
+    setSortProps,
+    setSortPropIndices,
+    setFilterProps,
+  };
+  return <SideBar state={state} setState={setState} />;
+};
+const SideBar = ({ state, setState }) => {
+  const { project, sortPropIndices } = state;
+  const { setShowOptions, setModes } = setState;
+  const { setAddGroupMode } = setState.setModes;
+
   return (
-    <Container>
-      <Title>Task Manager</Title>
-      Order by <TaskOrderWidgetContainer project={project} />
+    <StyledCard
+      onMouseOver={() => setShowOptions(true)}
+      onMouseLeave={() => {
+        setShowOptions(false);
+        setAddGroupMode(false);
+      }}
+    >
+      <Header setModes={setModes} />
+      <Modals state={state} setState={setState} />
+      <ProjectProgressBar />
+      <TaskOptionButtons setModes={setModes} />
+      <SortOrderBreadcrumbs sortPropIndices={sortPropIndices} />
       <SideBarTaskList project={project} />
-    </Container>
+    </StyledCard>
   );
 };
 
-const TaskOrderWidgetContainer = ({ project }) => {
-  const taskOrders = [
-    "Date Created (old-new)",
-    "Date Created (new-old)",
-    "Priority (high-low)",
-    "Priority (low-high)",
-    "Difficulty (easy-hard)",
-    "Difficulty (hard-easy)",
-    "Deadline (soon-later)",
-    "Deadline (later-soon)",
-  ];
-
-  const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
-  const [orderIndex, setOrderIndex] = React.useState(0);
-
-  const handleOrderChange = (newOrderIndex) => {
-    setOrderIndex(newOrderIndex);
-    orderProjectTasks(newOrderIndex);
-  };
-  const orderProjectTasks = (taskOrder) => {
-    const newTasks = [...projectTasks];
-    switch (taskOrder) {
-      case 0:
-        newTasks.sort(
-          (a, b) => new Date(a.dateCreated) - new Date(b.dateCreated)
-        );
-        break;
-      case 1:
-        newTasks.sort(
-          (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
-        );
-        break;
-      case 2:
-        newTasks.sort((a, b) => b.priority - a.priority);
-        break;
-      case 3:
-        newTasks.sort((a, b) => a.priority - b.priority);
-        break;
-      case 4:
-        newTasks.sort((a, b) => a.difficulty - b.difficulty);
-        break;
-      case 5:
-        newTasks.sort((a, b) => b.difficulty - a.difficulty);
-        break;
-      case 6:
-        newTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-        break;
-      case 7:
-        newTasks.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
-        break;
-      default:
-        throw new Error(`Task order ${taskOrder} not recognized.`);
-    }
-    setProjectTasks(newTasks);
-  };
+const Header = ({ setModes }) => {
   return (
-    <DropDownWidget
-      values={taskOrders}
-      currentIndex={orderIndex}
-      onIndexChange={handleOrderChange}
+    <StyledHeader>
+      <StyledTitle>Project Manager</StyledTitle>
+      <ProjectOptionButtons setModes={setModes} />
+    </StyledHeader>
+  );
+};
+const Modals = ({ state, setState }) => {
+  const { modes, project, sortPropIndices, filterProps } = state;
+  const { addGroupMode, editMode, deleteMode, sortMode, filterMode } = modes;
+  const {
+    setAddGroupMode,
+    setEditMode,
+    setDeleteMode,
+    setSortMode,
+    setFilterMode,
+  } = setState.setModes;
+  return (
+    <React.Fragment>
+      {addGroupMode && (
+        <AddGroupModal
+          modalOpen={addGroupMode}
+          closeModal={() => setAddGroupMode(false)}
+          projectSlug={project.slug}
+        />
+      )}
+      {editMode && (
+        <EditProjectModal
+          closeModal={() => setEditMode(false)}
+          project={project}
+        />
+      )}
+      {deleteMode && (
+        <DeleteModal
+          modalOpen={deleteMode}
+          closeModal={() => setDeleteMode(false)}
+          projectSlug={project.slug}
+        />
+      )}
+      {sortMode && (
+        <SortModal
+          modalOpen={sortMode}
+          closeModal={() => setSortMode(false)}
+          sortPropIndices={sortPropIndices}
+          setSortPropIndices={setState.setSortPropIndices}
+        />
+      )}
+      {filterMode && (
+        <FilterModal
+          modalOpen={filterMode}
+          closeModal={() => setFilterMode(false)}
+          filterProps={filterProps}
+          setFilterProps={setState.setFilterProps}
+        />
+      )}
+    </React.Fragment>
+  );
+};
+const EditProjectModal = ({ closeModal, project }) => {
+  return (
+    <Modal open onClose={closeModal}>
+      <Modal.Content>
+        <CustomFormContainerLg>
+          <CustomFormTitle>Edit Project</CustomFormTitle>
+          <UpdateProjectForm closeModal={closeModal} project={project} />
+        </CustomFormContainerLg>
+      </Modal.Content>
+      <Modal.Description></Modal.Description>
+    </Modal>
+  );
+};
+
+const ProjectOptionButtons = ({ setModes }) => {
+  const { setAddGroupMode, setEditMode, setDeleteMode } = setModes;
+  return (
+    <div>
+      <Button.Group>
+        <MiniIconButton
+          handleClick={() => setAddGroupMode(true)}
+          iconName={"plus"}
+          popupContent={"New Task Group"}
+        />
+        <MiniIconButton
+          handleClick={() => setEditMode(true)}
+          iconName={"edit"}
+          popupContent={"Edit Project"}
+        />
+        <MiniIconButton
+          handleClick={() => setDeleteMode(true)}
+          iconName={"trash"}
+          popupContent={"Delete Project"}
+          inverted={true}
+          color="red"
+        />
+      </Button.Group>
+    </div>
+  );
+};
+const TaskOptionButtons = ({ setModes }) => {
+  const { setSortMode, setFilterMode, setArchiveMode } = setModes;
+  return (
+    <div>
+      <Button.Group>
+        <MiniIconButton
+          handleClick={() => setSortMode(true)}
+          iconName={"sort"}
+          popupContent={"Sort Tasks"}
+        />
+        <MiniIconButton
+          handleClick={() => setFilterMode(true)}
+          iconName={"filter"}
+          popupContent={"Filter Tasks"}
+        />
+        <MiniIconButton
+          handleClick={() => setArchiveMode(true)}
+          iconName={"archive"}
+          popupContent={"Archive Tasks"}
+        />
+      </Button.Group>
+    </div>
+  );
+};
+const ProjectProgressBar = () => {
+  const { projectTasks } = React.useContext(TasksContext);
+  return (
+    <Popup
+      trigger={<ProgressBar items={projectTasks} />}
+      flowing
+      hoverable
+      content="Here"
     />
   );
 };
 
-const DropDownWidget = ({ values, currentIndex, onIndexChange }) => {
+const SortOrderBreadcrumbs = ({ sortPropIndices }) => {
+  const [sections, setSections] = React.useState([]);
+  React.useEffect(() => {
+    setSections(
+      sortPropIndices.map((item) => sortOptions[item].formParams.name)
+    );
+  }, JSON.stringify(sortPropIndices));
+
   return (
-    <Menu compact>
-      <Dropdown item simple text={values[currentIndex]}>
-        <Dropdown.Menu>
-          {values.map((value, index) => {
-            return (
-              <Dropdown.Item onClick={() => onIndexChange(index)}>
-                {value}
-              </Dropdown.Item>
-            );
-          })}
-        </Dropdown.Menu>
-      </Dropdown>
-    </Menu>
+    <StyledSortDisplay>
+      {sections.map((section) => (
+        <div>{section}</div>
+      ))}
+    </StyledSortDisplay>
   );
 };
-export default ProjectSideBar;
+
+export default SideBarContainer;

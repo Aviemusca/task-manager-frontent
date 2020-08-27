@@ -1,35 +1,13 @@
 import React from "react";
-import { Button, Icon, Form } from "semantic-ui-react";
+import { Button, Popup, Icon, Form } from "semantic-ui-react";
 import styled from "styled-components";
 import { ProgressBar } from "../common/progressBar";
+import { MiniIconButton } from "../common/buttons";
+import { StyledCard, StyledHeader, StyledTitle } from "../common/styles";
 import UpdateGroupModal from "./UpdateGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
 import { GroupTaskList } from "./TaskList";
 import { TasksContext } from "../contexts/TasksContext";
-import { axiosHeaders } from "../../axiosOptions";
-import axios from "axios";
-import routes from "../../routes";
-
-const Card = styled.div`
-  width: 100%;
-  border: solid 1px #ccc;
-  border-radius: 5px;
-  background-color: var(--project-container-color);
-  padding: 1em;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  padding-bottom: 0.5em;
-  border-bottom: solid 1px #bbb;
-`;
-
-const Title = styled.h2`
-  width: 60%;
-  margin-bottom: 0;
-`;
 
 const CardSubTitle = styled.h4`
   text-color: #777;
@@ -40,57 +18,60 @@ const CardDescription = styled.div`
   margin: 0 auto;
 `;
 
-const AddTaskStyle = styled.div``;
+const AddTaskStyle = styled.div`
+  margin: 1em 0;
+`;
 
 const GroupCardContainer = ({ group }) => {
   const [showOptions, setShowOptions] = React.useState(false);
+  const [addTaskMode, setAddTaskMode] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
   const [deleteMode, setDeleteMode] = React.useState(false);
-  const [progress, setProgress] = React.useState(group.completion);
 
   const state = {
     modes: {
+      addTaskMode,
       editMode,
       deleteMode,
     },
     showOptions,
-    progress,
     group,
   };
 
   const setState = {
     setModes: {
+      setAddTaskMode,
       setEditMode,
       setDeleteMode,
     },
     setShowOptions,
   };
 
-  const handlers = {
-    //  handleProgressChange,
-  };
-
-  return <GroupCard state={state} setState={setState} handlers={handlers} />;
+  return <GroupCard state={state} setState={setState} />;
 };
 
-const GroupCard = ({ state, setState, handlers }) => {
+const GroupCard = ({ state, setState }) => {
+  const { setShowOptions } = setState;
+  const { setAddTaskMode } = setState.setModes;
   return (
-    <Card>
+    <StyledCard
+      onMouseOver={() => setShowOptions(true)}
+      onMouseLeave={() => {
+        setShowOptions(false);
+        setAddTaskMode(false);
+      }}
+    >
       <GroupHeader state={state} setState={setState} />
       <GroupModals state={state} setState={setState} />
       <GroupProgressBar group={state.group} />
-      <AddTaskContainer group={state.group} />
-      <GroupTaskList
-        group={state.group}
-        onProgressChange={handlers.handleProgressChange}
-      />
-    </Card>
+      <AddTaskContainer state={state} setState={setState} />
+      <GroupTaskList group={state.group} />
+    </StyledCard>
   );
 };
 
 const GroupProgressBar = ({ group }) => {
   const { projectTasks } = React.useContext(TasksContext);
-
   return (
     <ProgressBar
       items={projectTasks.filter((task) => task.groupId === group.id)}
@@ -100,15 +81,12 @@ const GroupProgressBar = ({ group }) => {
 
 const GroupHeader = ({ state, setState }) => {
   const { showOptions, group } = state;
-  const { setShowOptions, setModes } = setState;
+  const { setModes } = setState;
   return (
-    <Header
-      onMouseOver={() => setShowOptions(true)}
-      onMouseLeave={() => setShowOptions(false)}
-    >
-      <Title>{group.title}</Title>
+    <StyledHeader>
+      <StyledTitle>{group.title}</StyledTitle>
       {showOptions && <OptionButtons setModes={setModes} />}
-    </Header>
+    </StyledHeader>
   );
 };
 
@@ -133,44 +111,36 @@ const GroupModals = ({ state, setState }) => {
 };
 
 const OptionButtons = ({ setModes }) => {
-  const { setEditMode, setDeleteMode } = setModes;
+  const { setAddTaskMode, setEditMode, setDeleteMode } = setModes;
   return (
-    <span>
-      <EditButton setEditMode={setEditMode} />
-      <DeleteButton setDeleteMode={setDeleteMode} />
-    </span>
+    <div>
+      <Button.Group size="mini">
+        <MiniIconButton
+          handleClick={() => setAddTaskMode(true)}
+          popupContent={"Add a new Task"}
+          iconName="plus"
+        />
+        <MiniIconButton
+          handleClick={() => setEditMode(true)}
+          popupContent={"Edit Task Group"}
+          iconName="edit"
+        />
+        <MiniIconButton
+          handleClick={() => setDeleteMode(true)}
+          popupContent={"Delete Task Group"}
+          iconName="trash"
+          color="red"
+          inverted={true}
+        />
+      </Button.Group>
+    </div>
   );
 };
 
-const EditButton = ({ setEditMode }) => {
-  return (
-    <Button
-      icon
-      background="transparent"
-      size="mini"
-      onClick={() => setEditMode(true)}
-    >
-      <Icon name="edit" />
-    </Button>
-  );
-};
-
-const DeleteButton = ({ setDeleteMode }) => {
-  return (
-    <Button
-      icon
-      inverted
-      color="red"
-      background="transparent"
-      size="mini"
-      onClick={() => setDeleteMode(true)}
-    >
-      <Icon name="trash" />
-    </Button>
-  );
-};
-
-const AddTaskContainer = ({ group }) => {
+const AddTaskContainer = ({ state, setState }) => {
+  const { group } = state;
+  const { addTaskMode } = state.modes;
+  const { setAddTaskMode } = setState.setModes;
   const emptyTask = {
     title: "",
     description: "",
@@ -178,7 +148,6 @@ const AddTaskContainer = ({ group }) => {
     group: group.id,
   };
   const { postTask } = React.useContext(TasksContext);
-  const [showAddTask, setShowAddTask] = React.useState(false);
   const [newTask, setNewTask] = React.useState(emptyTask);
 
   const handleChange = (event) => {
@@ -199,26 +168,18 @@ const AddTaskContainer = ({ group }) => {
     submit: handleSubmit,
   };
   return (
-    <AddTask
-      showAddTask={showAddTask}
-      setShowAddTask={setShowAddTask}
-      task={newTask}
-      handlers={handlers}
-    />
+    <React.Fragment>
+      {addTaskMode && (
+        <AddTask setOpen={setAddTaskMode} task={newTask} handlers={handlers} />
+      )}
+    </React.Fragment>
   );
 };
 
-const AddTask = ({ showAddTask, setShowAddTask, task, handlers }) => {
+const AddTask = ({ setOpen, task, handlers }) => {
   return (
-    <AddTaskStyle
-      onClick={() => setShowAddTask(true)}
-      onMouseLeave={() => setShowAddTask(false)}
-    >
-      {showAddTask ? (
-        <AddTaskForm task={task} handlers={handlers} />
-      ) : (
-        <AddTaskChevron />
-      )}
+    <AddTaskStyle onClick={() => setOpen(true)}>
+      <AddTaskForm task={task} handlers={handlers} />
     </AddTaskStyle>
   );
 };
@@ -235,14 +196,6 @@ const AddTaskForm = ({ task, handlers }) => {
         />
       </Form.Field>
     </Form>
-  );
-};
-
-const AddTaskChevron = () => {
-  return (
-    <div style={{ textAlign: "center", transition: "2s" }}>
-      <Icon name="chevron down" />
-    </div>
   );
 };
 

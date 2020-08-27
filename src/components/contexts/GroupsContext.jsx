@@ -35,6 +35,7 @@ function GroupsProvider(props) {
     setGroups([...groups, newGroup]);
     setNewGroup(emptyGroup);
   };
+
   const patchGroup = (group) => {
     axios
       .patch(
