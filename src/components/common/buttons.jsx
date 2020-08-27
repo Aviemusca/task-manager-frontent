@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Icon, Popup } from "semantic-ui-react";
+import { Button, Icon, Checkbox, Popup } from "semantic-ui-react";
 
 const MiniIconButton = ({
   popupContent,
@@ -27,4 +27,10 @@ const MiniIconButton = ({
   );
 };
 
-export { MiniIconButton };
+const TableRowToggle = ({ row, checked, handleChange }) => {
+  return (
+    <Checkbox toggle checked={checked} onChange={() => handleChange(row)} />
+  );
+};
+
+export { MiniIconButton, TableRowToggle };

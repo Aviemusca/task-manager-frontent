@@ -1,23 +1,23 @@
 import React from "react";
 import { Modal } from "semantic-ui-react";
-import TaskSortWidget from "./TaskSortWidget";
+import TaskFilterWidget from "./TaskFilterWidget";
 
-const SortModal = ({
+const FilterModal = ({
   modalOpen,
   closeModal,
-  sortPropIndices,
-  setSortPropIndices,
+  filterProps,
+  setFilterProps,
 }) => {
   return (
     <Modal open={modalOpen} onClose={closeModal} closeIcon>
       <Modal.Content>
-        <TaskSortWidget
-          sortPropIndices={sortPropIndices}
-          setSortPropIndices={setSortPropIndices}
+        <TaskFilterWidget
+          filterProps={filterProps}
+          setFilterProps={setFilterProps}
         />
       </Modal.Content>
     </Modal>
   );
 };
 
-export default SortModal;
+export default FilterModal;

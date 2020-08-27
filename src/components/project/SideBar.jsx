@@ -17,6 +17,8 @@ import DeleteModal from "./DeleteProjectModal";
 import AddGroupModal from "./AddGroupModal";
 import SortModal from "./SortModal";
 import sortOptions from "./sortOptions";
+import filterOptions from "./filterOptions";
+import FilterModal from "./FilterModal";
 
 const StyledSortDisplay = styled.div`
   display: flex;
@@ -35,6 +37,9 @@ const SideBarContainer = ({ project }) => {
   const [sortPropIndices, setSortPropIndices] = React.useState(
     sortOptions.map((item, index) => index)
   );
+  const [filterProps, setFilterProps] = React.useState(
+    JSON.parse(JSON.stringify(filterOptions))
+  );
 
   const state = {
     modes: {
@@ -48,6 +53,7 @@ const SideBarContainer = ({ project }) => {
     showOptions,
     sortProps,
     sortPropIndices,
+    filterProps,
     project,
   };
 
@@ -63,6 +69,7 @@ const SideBarContainer = ({ project }) => {
     setShowOptions,
     setSortProps,
     setSortPropIndices,
+    setFilterProps,
   };
   return <SideBar state={state} setState={setState} />;
 };
@@ -98,13 +105,14 @@ const Header = ({ setModes }) => {
   );
 };
 const Modals = ({ state, setState }) => {
-  const { modes, project, sortPropIndices, sortProps } = state;
-  const { addGroupMode, editMode, deleteMode, sortMode } = modes;
+  const { modes, project, sortPropIndices, filterProps } = state;
+  const { addGroupMode, editMode, deleteMode, sortMode, filterMode } = modes;
   const {
     setAddGroupMode,
     setEditMode,
     setDeleteMode,
     setSortMode,
+    setFilterMode,
   } = setState.setModes;
   return (
     <React.Fragment>
@@ -132,11 +140,16 @@ const Modals = ({ state, setState }) => {
         <SortModal
           modalOpen={sortMode}
           closeModal={() => setSortMode(false)}
-          project={project}
-          sortProps={sortProps}
-          setSortProps={setState.setSortProps}
           sortPropIndices={sortPropIndices}
           setSortPropIndices={setState.setSortPropIndices}
+        />
+      )}
+      {filterMode && (
+        <FilterModal
+          modalOpen={filterMode}
+          closeModal={() => setFilterMode(false)}
+          filterProps={filterProps}
+          setFilterProps={setState.setFilterProps}
         />
       )}
     </React.Fragment>

@@ -1,6 +1,7 @@
 import React from "react";
 import { TasksContext } from "../contexts/TasksContext";
 import { Dropdown, Icon, Checkbox, Popup, Table } from "semantic-ui-react";
+import { TableRowToggle } from "../common/buttons";
 import sortOptions from "./sortOptions";
 
 const arraySort = require("array-sort");
@@ -50,11 +51,11 @@ const SortTableContainer = ({ sortPropIndices, setSortPropIndices }) => {
       handleReverseToggle={handleReverseToggle}
     />
   );
-  };
+};
 
 const SortTable = ({ sortProps, handleSortChange, handleReverseToggle }) => {
   return (
-    <Table definition>
+    <Table definition celled textAlign="center">
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell />
@@ -109,9 +110,9 @@ const SortRow = ({ sortProp, row, handleSortChange, handleReverseToggle }) => {
         />
       </Table.Cell>
       <Table.Cell>
-        <ToggleDirection
+        <TableRowToggle
           row={row}
-          reverse={reverse}
+          checked={reverse}
           handleChange={handleReverseToggle}
         />
       </Table.Cell>
@@ -146,11 +147,6 @@ const SortDirection = ({ defaultFirst, defaultLast, reversed }) => {
       <Icon name="right arrow" />
       {defaultFirst}
     </div>
-  );
-};
-const ToggleDirection = ({ row, reverse, handleChange }) => {
-  return (
-    <Checkbox toggle checked={reverse} onChange={() => handleChange(row)} />
   );
 };
 
