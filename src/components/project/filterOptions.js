@@ -1,12 +1,16 @@
-import { add as addDate, sub as subDate } from "date-fns";
+import { add as addDate, sub as subDate, format as formatDate } from "date-fns";
+
+const DATE_FORMAT = "yyyy-MM-dd HH:mm";
 
 const filterOptions = [
   {
     params: {
       name: "Status",
-      notStartedChecked: false,
-      inProgressChecked: false,
-      completedChecked: false,
+      checkboxes: {
+        notStarted: false,
+        inProgress: false,
+        completed: false,
+      },
     },
     prop: "state",
     checked: false,
@@ -14,7 +18,10 @@ const filterOptions = [
   {
     params: {
       name: "Deadline",
-      minMax: [new Date(), addDate(new Date(), { months: 1 })],
+      minMax: [
+        formatDate(new Date(), DATE_FORMAT),
+        formatDate(addDate(new Date(), { months: 1 }), DATE_FORMAT),
+      ],
     },
     prop: "deadline",
     checked: false,
@@ -39,8 +46,8 @@ const filterOptions = [
     params: {
       name: "Date Created",
       minMax: [
-        subDate(new Date(), { months: 1 }),
-        addDate(new Date(), { months: 1 }),
+        formatDate(subDate(new Date(), { months: 1 }), DATE_FORMAT),
+        formatDate(addDate(new Date(), { months: 1 }), DATE_FORMAT),
       ],
     },
     prop: "dateCreated",

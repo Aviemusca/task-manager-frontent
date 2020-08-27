@@ -37,6 +37,13 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
     });
     return newMinMax;
   };
+
+  const updateFilterProps = (newFilterProp, filterPropIndex) => {
+    const newFilterProps = [...filterProps];
+    replaceItem(newFilterProps, newFilterProp, filterPropIndex);
+    setFilterProps(newFilterProps);
+  };
+
   const handlers = {
     // Switching filters on/off
     toggleChange(row) {
@@ -49,9 +56,13 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
       const [newFilterProp, filterPropIndex] = getFilterPropData(taskProp);
       newMinMax = validateMinMax(filterPropIndex, newMinMax);
       newFilterProp.params.minMax = newMinMax;
-      const newFilterProps = [...filterProps];
-      replaceItem(newFilterProps, newFilterProp, filterPropIndex);
-      setFilterProps(newFilterProps);
+      updateFilterProps(newFilterProp, filterPropIndex);
+    },
+    statusChange(status) {
+      const [newFilterProp, filterPropIndex] = getFilterPropData("state");
+      newFilterProp.params.checkboxes[status] = !newFilterProp.params
+        .checkboxes[status];
+      updateFilterProps(newFilterProp, filterPropIndex);
     },
   };
 
@@ -77,7 +88,7 @@ const FilterTable = ({ filterProps, handlers }) => {
             filterOn={item.checked}
             handleToggleChange={handlers.toggleChange}
           >
-            {getOptionCell(item, handlers)}
+            {item.checked && getOptionCell(item, handlers)}
           </TableRow>
         ))}
       </Table.Body>
@@ -86,18 +97,18 @@ const FilterTable = ({ filterProps, handlers }) => {
 };
 
 const getOptionCell = (item, handlers) => {
+  const { statusChange, minMaxChange } = handlers;
   switch (item.prop) {
     case "state":
-      return getStatusCell(item);
+      return getStatusCell(item, statusChange);
     case "deadline":
-      return getDeadlineCell(item, handlers.minMaxChange);
+      return getDeadlineCell(item, minMaxChange);
     case "priority":
-      return getPriorityCell(item, handlers.minMaxChange);
+      return getPriorityCell(item, minMaxChange);
     case "difficulty":
-      return getDifficultyCell(item, handlers.minMaxChange);
+      return getDifficultyCell(item, minMaxChange);
     case "dateCreated":
-      return getDateCreatedCell(item);
-
+      return getDateCreatedCell(item, minMaxChange);
     default:
       throw new Error(`Filter prop ${item.prop} not recognized`);
   }
@@ -110,22 +121,20 @@ const getDeadlineCell = (item, handleChange) => {
   );
 };
 
-const getDateCreatedCell = (item) => {
-  return;
-};
-const getStatusCell = (item) => {
-  const {
-    notStartedChecked,
-    inProgressChecked,
-    completedChecked,
-  } = item.params;
+const getDateCreatedCell = (item, handleChange) => {
+  const { minMax } = item.params;
   return (
-    <StatusCell
-      notStartedChecked={notStartedChecked}
-      inProgressChecked={inProgressChecked}
-      completedChecked={completedChecked}
+    <DateCell
+      taskProp="dateCreated"
+      minMax={minMax}
+      handleChange={handleChange}
     />
   );
+};
+
+const getStatusCell = (item, handleChange) => {
+  const { checkboxes } = item.params;
+  return <StatusCell checkboxes={checkboxes} handleChange={handleChange} />;
 };
 const getDifficultyCell = (item, handleChange) => {
   const { minMax } = item.params;
@@ -163,16 +172,25 @@ const TableRow = (props) => {
   );
 };
 
-const StatusCell = ({
-  notStartedChecked,
-  inProgressChecked,
-  completedChecked,
-}) => {
+const StatusCell = ({ checkboxes, handleChange }) => {
+  const { notStarted, inProgress, completed } = checkboxes;
   return (
     <CheckBoxWrapper>
-      <Checkbox label="Not Started" checked={notStartedChecked} />
-      <Checkbox label="In Progress" checked={inProgressChecked} />
-      <Checkbox label="Completed" checked={completedChecked} />
+      <Checkbox
+        label="Not Started"
+        checked={notStarted}
+        onChange={() => handleChange("notStarted")}
+      />
+      <Checkbox
+        label="In Progress"
+        checked={inProgress}
+        onChange={() => handleChange("inProgress")}
+      />
+      <Checkbox
+        label="Completed"
+        checked={completed}
+        onChange={() => handleChange("completed")}
+      />
     </CheckBoxWrapper>
   );
 };
@@ -216,18 +234,30 @@ const DoubleSliderCell = ({ taskProp, minMax, handleChange }) => {
 };
 const DateCell = ({ taskProp, minMax, handleChange }) => {
   return (
-    <DateTimeInput
-      label="Deadline"
-      name="deadline"
-      iconPosition="left"
-      dateFormat="YYYY-MM-DD"
-      timeFormat="24"
-      placeholder="Earliest"
-      value={minMax[0]}
-      onChange={(event) =>
-        handleChange(taskProp, [event.target.value, minMax[1]])
-      }
-    />
+    <React.Fragment>
+      <DateTimeInput
+        label="Earliest"
+        iconPosition="left"
+        dateFormat="YYYY-MM-DD"
+        timeFormat="24"
+        placeholder="Earliest"
+        value={minMax[0]}
+        onChange={(event, { name, value }) =>
+          handleChange(taskProp, [value, minMax[1]])
+        }
+      />
+      <DateTimeInput
+        label="Latest"
+        iconPosition="left"
+        dateFormat="YYYY-MM-DD"
+        timeFormat="24"
+        placeholder="Latest"
+        value={minMax[1]}
+        onChange={(event, { name, value }) =>
+          handleChange(taskProp, [minMax[0], value])
+        }
+      />
+    </React.Fragment>
   );
 };
 export default FilterTableContainer;
