@@ -6,6 +6,7 @@ const filterOptions = [
   {
     params: {
       name: "Status",
+      minMax: [null, null],
       checkboxes: {
         notStarted: false,
         inProgress: false,

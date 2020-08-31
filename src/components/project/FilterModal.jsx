@@ -14,6 +14,7 @@ const FilterModal = ({
         <TaskFilterWidget
           filterProps={filterProps}
           setFilterProps={setFilterProps}
+          closeModal={closeModal}
         />
       </Modal.Content>
     </Modal>

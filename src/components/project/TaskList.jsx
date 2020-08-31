@@ -14,8 +14,14 @@ const GroupTaskListContainer = ({ group }) => {
 };
 
 const SideBarTaskListContainer = () => {
-  const { projectTasks } = React.useContext(TasksContext);
-  return <TaskList tasks={projectTasks} />;
+  const { projectTasks, managerTasks, setManagerTasks } = React.useContext(
+    TasksContext
+  );
+  React.useEffect(() => {
+    setManagerTasks(projectTasks);
+  }, [JSON.stringify(projectTasks)]);
+
+  return <TaskList tasks={managerTasks} />;
 };
 
 const TaskListContainer = ({ tasks }) => {

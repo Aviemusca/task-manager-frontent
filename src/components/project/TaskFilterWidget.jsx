@@ -22,49 +22,84 @@ const StyledSlider = styled(Slider)`
 const FilterTableContainer = ({ filterProps, setFilterProps }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
 
-  const getFilterPropData = (taskProp) => {
-    const filterProp = filterProps.find((item) => item.prop === taskProp);
-    const filterPropIndex = filterProps.indexOf(filterProp);
-    return [filterProp, filterPropIndex];
+  const taskFilter = (taskProp) => {
+    // Filter tasks of given taskProp according to min/max values set in filterProps
+    const [filterProp] = utils.getFilterPropData(taskProp);
+    if (!filterProp.checked) return;
+    let newTasks = [...projectTasks];
+    const minMax = filterProp.params.minMax;
+    newTasks = newTasks.filter(
+      (task) => task[taskProp] >= minMax[0] && task[taskProp] <= minMax[1]
+    );
+    setProjectTasks(newTasks);
   };
 
-  const validateMinMax = (filterPropIndex, minMax) => {
-    // If min/max blank -> return default value
-    const newMinMax = [...minMax];
-    minMax.forEach((item, index) => {
-      if (!item)
-        newMinMax[index] = filterOptions[filterPropIndex].params.minMax[index];
-    });
-    return newMinMax;
-  };
-
-  const updateFilterProps = (newFilterProp, filterPropIndex) => {
-    const newFilterProps = [...filterProps];
-    replaceItem(newFilterProps, newFilterProp, filterPropIndex);
-    setFilterProps(newFilterProps);
+  const utils = {
+    // utility functions
+    getFilterPropData(taskProp) {
+      // Returns the filterProp set for a given taskProp
+      const filterProp = filterProps.find((item) => item.prop === taskProp);
+      const filterPropIndex = filterProps.indexOf(filterProp);
+      return [filterProp, filterPropIndex];
+    },
+    validateMinMax(filterPropIndex, minMax) {
+      // If provided min/max are blank -> return default value
+      const newMinMax = [...minMax];
+      minMax.forEach((item, index) => {
+        if (!item)
+          newMinMax[index] =
+            filterOptions[filterPropIndex].params.minMax[index];
+      });
+      return newMinMax;
+    },
+    updateFilterProps(newFilterProp, filterPropIndex) {
+      const newFilterProps = [...filterProps];
+      replaceItem(newFilterProps, newFilterProp, filterPropIndex);
+      setFilterProps(newFilterProps);
+    },
   };
 
   const handlers = {
-    // Switching filters on/off
+    // All onChange event handlers for the task filter widget
     toggleChange(row) {
+      // Switching filters on/off
       const newFilterProps = [...filterProps];
       newFilterProps[row].checked = !newFilterProps[row].checked;
       setFilterProps(newFilterProps);
     },
-    // Handling changes in min/max filter values
     minMaxChange(taskProp, newMinMax) {
-      const [newFilterProp, filterPropIndex] = getFilterPropData(taskProp);
-      newMinMax = validateMinMax(filterPropIndex, newMinMax);
+      // Handling changes in min/max filter values
+      const [newFilterProp, filterPropIndex] = utils.getFilterPropData(
+        taskProp
+      );
+      newMinMax = utils.validateMinMax(filterPropIndex, newMinMax);
       newFilterProp.params.minMax = newMinMax;
-      updateFilterProps(newFilterProp, filterPropIndex);
+      utils.updateFilterProps(newFilterProp, filterPropIndex);
     },
     statusChange(status) {
-      const [newFilterProp, filterPropIndex] = getFilterPropData("state");
+      // Handling changes in task status
+      const [newFilterProp, filterPropIndex] = utils.getFilterPropData("state");
       newFilterProp.params.checkboxes[status] = !newFilterProp.params
         .checkboxes[status];
-      updateFilterProps(newFilterProp, filterPropIndex);
+      utils.updateFilterProps(newFilterProp, filterPropIndex);
     },
   };
+  // Update displayed tasks on changes in respective filterProps
+  React.useEffect(() => {
+    taskFilter("priority");
+  }, [JSON.stringify(utils.getFilterPropData("priority")[0].params.minMax)]);
+
+  React.useEffect(() => {
+    taskFilter("difficulty");
+  }, [JSON.stringify(utils.getFilterPropData("difficulty")[0].params.minMax)]);
+
+  React.useEffect(() => {
+    taskFilter("dateCreated");
+  }, [JSON.stringify(utils.getFilterPropData("dateCreated")[0].params.minMax)]);
+
+  React.useEffect(() => {
+    taskFilter("deadline");
+  }, [JSON.stringify(utils.getFilterPropData("deadline")[0].params.minMax)]);
 
   return <FilterTable filterProps={filterProps} handlers={handlers} />;
 };
