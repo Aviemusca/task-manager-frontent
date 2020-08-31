@@ -10,43 +10,35 @@ const compareDates = (prop, direction) => (a, b) =>
 
 const sortOptions = [
   {
-    formParams: {
-      name: "Deadline",
-      defaultFirst: "Past/Upcoming",
-      defaultLast: "Later",
-    },
+    name: "Date Created",
+    defaultFirst: "Old",
+    defaultLast: "New",
+    prop: "dateCreated",
+    compareFunc: compareDates,
+    reverse: false,
+  },
+  {
+    name: "Deadline",
+    defaultFirst: "Old",
+    defaultLast: "New",
     prop: "deadline",
     compareFunc: compareDates,
     reverse: false,
   },
   {
-    formParams: {
-      name: "Priority",
-      defaultFirst: "Low",
-      defaultLast: "High",
-    },
+    name: "Priority",
+    defaultFirst: "Low",
+    defaultLast: "High",
     prop: "priority",
-    compareFunc: compareNumbers,
-    reverse: true,
-  },
-  {
-    formParams: {
-      name: "Difficulty",
-      defaultFirst: "Easy",
-      defaultLast: "Challenging",
-    },
-    prop: "difficulty",
     compareFunc: compareNumbers,
     reverse: false,
   },
   {
-    formParams: {
-      name: "Date Created",
-      defaultFirst: "Old",
-      defaultLast: "New",
-    },
-    prop: "dateCreated",
-    compareFunc: compareDates,
+    name: "Difficulty",
+    defaultFirst: "Low",
+    defaultLast: "High",
+    prop: "difficulty",
+    compareFunc: compareNumbers,
     reverse: false,
   },
 ];

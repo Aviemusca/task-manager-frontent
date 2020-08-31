@@ -33,10 +33,7 @@ const SideBarContainer = ({ project }) => {
   const [sortMode, setSortMode] = React.useState(false);
   const [filterMode, setFilterMode] = React.useState(false);
   const [archiveMode, setArchiveMode] = React.useState(false);
-  const [sortProps, setSortProps] = React.useState([]);
-  const [sortPropIndices, setSortPropIndices] = React.useState(
-    sortOptions.map((item, index) => index)
-  );
+  const [sortProps, setSortProps] = React.useState([sortOptions[0]]);
   const [filterProps, setFilterProps] = React.useState(
     JSON.parse(JSON.stringify(filterOptions))
   );
@@ -52,7 +49,6 @@ const SideBarContainer = ({ project }) => {
     },
     showOptions,
     sortProps,
-    sortPropIndices,
     filterProps,
     project,
   };
@@ -68,7 +64,6 @@ const SideBarContainer = ({ project }) => {
     },
     setShowOptions,
     setSortProps,
-    setSortPropIndices,
     setFilterProps,
   };
   return <SideBar state={state} setState={setState} />;
@@ -90,7 +85,6 @@ const SideBar = ({ state, setState }) => {
       <Modals state={state} setState={setState} />
       <ProjectProgressBar />
       <TaskOptionButtons setModes={setModes} />
-      <SortOrderBreadcrumbs sortPropIndices={sortPropIndices} />
       <SideBarTaskList project={project} />
     </StyledCard>
   );
@@ -105,7 +99,7 @@ const Header = ({ setModes }) => {
   );
 };
 const Modals = ({ state, setState }) => {
-  const { modes, project, sortPropIndices, filterProps } = state;
+  const { modes, project, sortProps, filterProps } = state;
   const { addGroupMode, editMode, deleteMode, sortMode, filterMode } = modes;
   const {
     setAddGroupMode,
@@ -140,8 +134,8 @@ const Modals = ({ state, setState }) => {
         <SortModal
           modalOpen={sortMode}
           closeModal={() => setSortMode(false)}
-          sortPropIndices={sortPropIndices}
-          setSortPropIndices={setState.setSortPropIndices}
+          sortProps={sortProps}
+          setSortProps={setState.setSortProps}
         />
       )}
       {filterMode && (

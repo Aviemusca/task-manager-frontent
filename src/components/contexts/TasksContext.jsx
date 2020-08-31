@@ -10,7 +10,10 @@ const TasksContext = React.createContext();
 function TasksProvider(props) {
   // Provider for the tasks of a given project
   const emptyTask = { title: "", description: "" };
+  // Tasks loaded from the backend
   const [projectTasks, setProjectTasks] = React.useState([]);
+  // Tasks displayed in the manager / side-bar (could be filtered etc..)
+  const [managerTasks, setManagerTasks] = React.useState([]);
 
   const getProjectTasks = (projectSlug) => {
     axios
@@ -72,6 +75,8 @@ function TasksProvider(props) {
       value={{
         projectTasks,
         setProjectTasks,
+        managerTasks,
+        setManagerTasks,
         getProjectTasks,
         postTask,
         patchTask,
