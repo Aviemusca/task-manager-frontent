@@ -73,8 +73,8 @@ const SortTable = ({ sortProps, handlers }) => {
           <Table.Row>
             <Table.HeaderCell />
             <Table.HeaderCell>Task Property</Table.HeaderCell>
-            <Table.HeaderCell>Sort Direction</Table.HeaderCell>
-            <Table.HeaderCell>Toggle Direction</Table.HeaderCell>
+            <Table.HeaderCell>Direction</Table.HeaderCell>
+            <Table.HeaderCell>Switch Direction</Table.HeaderCell>
             <Table.HeaderCell>Remove</Table.HeaderCell>
           </Table.Row>
         </Table.Header>

@@ -20,24 +20,26 @@ const StyledSlider = styled(Slider)`
   width: 80%;
 `;
 const FilterTableContainer = ({ filterProps, setFilterProps }) => {
-  const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
+  const { managerTasks, projectTasks, setManagerTasks } = React.useContext(
+    TasksContext
+  );
 
   const taskFilter = (taskProp) => {
     // Filter tasks of given taskProp according to min/max values set in filterProps
     const [filterProp] = utils.getFilterPropData(taskProp);
     if (!filterProp.checked) return;
-    let newTasks = [...projectTasks];
+    let newTasks = [...managerTasks];
     const minMax = filterProp.params.minMax;
     newTasks = newTasks.filter(
       (task) => task[taskProp] >= minMax[0] && task[taskProp] <= minMax[1]
     );
-    setProjectTasks(newTasks);
+    setManagerTasks(newTasks);
   };
 
   const utils = {
     // utility functions
     getFilterPropData(taskProp) {
-      // Returns the filterProp set for a given taskProp
+      // Returns the filterProp data for a given taskProp
       const filterProp = filterProps.find((item) => item.prop === taskProp);
       const filterPropIndex = filterProps.indexOf(filterProp);
       return [filterProp, filterPropIndex];
@@ -84,6 +86,7 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
       utils.updateFilterProps(newFilterProp, filterPropIndex);
     },
   };
+
   // Update displayed tasks on changes in respective filterProps
   React.useEffect(() => {
     taskFilter("priority");
@@ -123,7 +126,7 @@ const FilterTable = ({ filterProps, handlers }) => {
             filterOn={item.checked}
             handleToggleChange={handlers.toggleChange}
           >
-            {item.checked && getOptionCell(item, handlers)}
+            {getOptionCell(item, handlers)}
           </TableRow>
         ))}
       </Table.Body>
