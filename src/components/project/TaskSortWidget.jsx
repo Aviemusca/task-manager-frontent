@@ -92,6 +92,7 @@ const SortTable = ({ sortProps, handlers }) => {
         </Table.Body>
       </Table>
       <Buttons
+        numSortProps={sortProps.length}
         handleAddSortProp={handlers.addSortProp}
         handleSort={handlers.sortTasks}
       />
@@ -99,17 +100,19 @@ const SortTable = ({ sortProps, handlers }) => {
   );
 };
 
-const Buttons = ({ handleAddSortProp, handleSort }) => {
+const Buttons = ({ numSortProps, handleAddSortProp, handleSort }) => {
   return (
     <React.Fragment>
-      <Popup
-        content="Add Sort By Task Property"
-        trigger={
-          <Button icon background="transparent" onClick={handleAddSortProp}>
-            <Icon name="plus" />
-          </Button>
-        }
-      />
+      {numSortProps < sortOptions.length && (
+        <Popup
+          content="Add Sort By Task Property"
+          trigger={
+            <Button icon background="transparent" onClick={handleAddSortProp}>
+              <Icon name="plus" />
+            </Button>
+          }
+        />
+      )}
       <Button primary onClick={handleSort}>
         Sort
       </Button>
