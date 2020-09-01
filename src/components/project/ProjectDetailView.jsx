@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import SideBar from "./SideBar";
 import GroupCardList from "./GroupCardList";
-import Header from "./Header";
 
 import { ProjectsContext } from "../contexts/ProjectsContext";
+import { GroupsContext } from "../contexts/GroupsContext";
 import { TasksContext } from "../contexts/TasksContext";
 
 const StyledHeader = styled.div`
@@ -14,6 +14,11 @@ const StyledHeader = styled.div`
   border: solid 1px #ccc;
   border-radius: 5px;
   background-color: var(--project-container-color);
+`;
+
+const Title = styled.h1`
+  text-align: center;
+  margin: 2em auto;
 `;
 
 export const ProjectGrid = styled.div`
@@ -27,7 +32,10 @@ export const ProjectGrid = styled.div`
 const ProjectDetailViewContainer = (props) => {
   const { projectSlug } = props.match.params;
   const { projects } = useContext(ProjectsContext);
-  const { getProjectTasks } = useContext(TasksContext);
+  const { setGroups } = useContext(GroupsContext);
+  const { getProjectTasks, setProjectTasks, setManagerTasks } = useContext(
+    TasksContext
+  );
 
   const project = props.location.state
     ? props.location.state.project
@@ -35,6 +43,11 @@ const ProjectDetailViewContainer = (props) => {
 
   React.useEffect(() => {
     getProjectTasks(project.slug);
+    return () => {
+      setProjectTasks([]);
+      setManagerTasks([]);
+      setGroups([]);
+    };
   }, []);
   return <ProjectDetailView project={project} />;
 };
@@ -42,9 +55,7 @@ const ProjectDetailViewContainer = (props) => {
 const ProjectDetailView = ({ project }) => {
   return (
     <div>
-      <StyledHeader>
-        <Header project={project} />
-      </StyledHeader>
+      <Title>{project.title}</Title>
       <ProjectGrid>
         <SideBar project={project} />
         <GroupCardList project={project} />

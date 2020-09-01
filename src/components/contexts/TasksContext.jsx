@@ -12,7 +12,7 @@ function TasksProvider(props) {
   const emptyTask = { title: "", description: "" };
   // Tasks loaded from the backend
   const [projectTasks, setProjectTasks] = React.useState([]);
-  // Tasks displayed in the manager / side-bar (could be filtered etc..)
+  // Tasks displayed in the manager / side-bar (filtered etc..)
   const [managerTasks, setManagerTasks] = React.useState([]);
 
   const getProjectTasks = (projectSlug) => {

@@ -88,10 +88,11 @@ const StyledProgressTitle = styled.span`
 const TaskContainer = ({ tsk }) => {
   const [task, setTask] = React.useState(tsk);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [expandedTask, setExpandedTask] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
   const [priorityColor, setPriorityColor] = React.useState([]);
   const [stateColor, setStateColor] = React.useState([]);
   const [difficultyColor, setDifficultyColor] = React.useState([]);
+  const [selected, setSelected] = React.useState(false);
 
   React.useEffect(() => {
     setPriorityColor(getPriorityColor(task.priority));
@@ -109,15 +110,17 @@ const TaskContainer = ({ tsk }) => {
     setTask(tsk);
   }, [JSON.stringify(tsk)]);
 
-  const handleModalOpen = (event) => {
-    if (event.ctrlKey) setModalOpen(true);
+  const handleClick = (event) => {
+    if (event.shiftKey) setModalOpen(true);
+    if (event.ctrlKey) setSelected(!selected);
   };
   const closeModal = () => setModalOpen(false);
 
   const state = {
     task,
     modalOpen,
-    expandedTask,
+    expanded,
+    selected,
     colors: {
       priorityColor,
       difficultyColor,
@@ -126,7 +129,7 @@ const TaskContainer = ({ tsk }) => {
   };
   const setState = {
     setTask,
-    setExpandedTask,
+    setExpanded,
     setModal: {
       setModalOpen,
       closeModal,
@@ -138,31 +141,34 @@ const TaskContainer = ({ tsk }) => {
     },
   };
   return (
-    <div onClick={handleModalOpen}>
+    <div onClick={handleClick}>
       <Task state={state} setState={setState} />
     </div>
   );
 };
 
 const Task = ({ state, setState }) => {
-  const { task, expandedTask, modalOpen, deadlineStatus } = state;
-  const { setTask, setExpandedTask } = setState;
+  const { task, expanded, selected, modalOpen, deadlineStatus } = state;
+  const { setTask, setExpanded } = setState;
   const { closeModal } = setState.setModal;
 
   return (
     <React.Fragment>
       <Card
         fluid
-        onClick={() => setExpandedTask(!expandedTask)}
+        onClick={(event) => {
+          if (!event.ctrlKey && !event.shiftKey) setExpanded(!expanded);
+        }}
         header={<Header task={task} colors={state.colors} />}
-        description={expandedTask && task.description}
+        description={expanded && task.description}
+        color={selected && "blue"}
         meta={
-          expandedTask && (
+          expanded && (
             <Dates dateCreated={task.dateCreated} deadline={task.deadline} />
           )
         }
         extra={
-          expandedTask && (
+          expanded && (
             <SecondaryProgressBars task={state.task} colors={state.colors} />
           )
         }

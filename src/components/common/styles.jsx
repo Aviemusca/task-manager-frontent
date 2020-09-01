@@ -65,3 +65,10 @@ export const StyledTitle = styled.h2`
   width: 60%;
   margin-bottom: 0;
 `;
+
+export const StyledTableTitle = styled.h2`
+  text-align: center;
+  font-weight: 900;
+  width: 25%;
+  margin: 1em auto;
+`;

@@ -8,19 +8,13 @@ import {
   Popup,
   Table,
 } from "semantic-ui-react";
-import styled from "styled-components";
 import uuid from "react-uuid";
 import { TableRowToggle } from "../common/buttons";
+import { StyledTableTitle } from "../common/styles";
 import sortOptions from "./sortOptions";
 
 const arraySort = require("array-sort");
 
-const StyledTableTitle = styled.h2`
-  text-align: center;
-  font-weight: 900;
-  width: 25%;
-  margin: 1em auto;
-`;
 const SortTableContainer = ({ sortProps, setSortProps }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
 
@@ -73,8 +67,8 @@ const SortTable = ({ sortProps, handlers }) => {
           <Table.Row>
             <Table.HeaderCell />
             <Table.HeaderCell>Task Property</Table.HeaderCell>
-            <Table.HeaderCell>Sort Direction</Table.HeaderCell>
-            <Table.HeaderCell>Toggle Direction</Table.HeaderCell>
+            <Table.HeaderCell>Direction</Table.HeaderCell>
+            <Table.HeaderCell>Switch Direction</Table.HeaderCell>
             <Table.HeaderCell>Remove</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -92,6 +86,7 @@ const SortTable = ({ sortProps, handlers }) => {
         </Table.Body>
       </Table>
       <Buttons
+        numSortProps={sortProps.length}
         handleAddSortProp={handlers.addSortProp}
         handleSort={handlers.sortTasks}
       />
@@ -99,17 +94,19 @@ const SortTable = ({ sortProps, handlers }) => {
   );
 };
 
-const Buttons = ({ handleAddSortProp, handleSort }) => {
+const Buttons = ({ numSortProps, handleAddSortProp, handleSort }) => {
   return (
     <React.Fragment>
-      <Popup
-        content="Add Sort By Task Property"
-        trigger={
-          <Button icon background="transparent" onClick={handleAddSortProp}>
-            <Icon name="plus" />
-          </Button>
-        }
-      />
+      {numSortProps < sortOptions.length && (
+        <Popup
+          content="Add Sort By Task Property"
+          trigger={
+            <Button icon background="transparent" onClick={handleAddSortProp}>
+              <Icon name="plus" />
+            </Button>
+          }
+        />
+      )}
       <Button primary onClick={handleSort}>
         Sort
       </Button>

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Popup, Button, Modal } from "semantic-ui-react";
+import { Popup, Button, Modal, Breadcrumb, Label } from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
 import { ProgressBar } from "../common/progressBar";
 import {
@@ -22,7 +22,9 @@ import FilterModal from "./FilterModal";
 
 const StyledSortDisplay = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
+  align-items: center;
+
   text-color: #777;
 `;
 const SideBarContainer = ({ project }) => {
@@ -69,7 +71,7 @@ const SideBarContainer = ({ project }) => {
   return <SideBar state={state} setState={setState} />;
 };
 const SideBar = ({ state, setState }) => {
-  const { project, sortPropIndices } = state;
+  const { project } = state;
   const { setShowOptions, setModes } = setState;
   const { setAddGroupMode } = setState.setModes;
 
@@ -85,6 +87,9 @@ const SideBar = ({ state, setState }) => {
       <Modals state={state} setState={setState} />
       <ProjectProgressBar />
       <TaskOptionButtons setModes={setModes} />
+      <SortOrderBreadcrumbs
+        sections={state.sortProps.map((item) => item.name)}
+      />
       <SideBarTaskList project={project} />
     </StyledCard>
   );
@@ -207,7 +212,7 @@ const TaskOptionButtons = ({ setModes }) => {
         <MiniIconButton
           handleClick={() => setArchiveMode(true)}
           iconName={"archive"}
-          popupContent={"Archive Tasks"}
+          popupContent={"Archive Selected Tasks"}
         />
       </Button.Group>
     </div>
@@ -225,19 +230,16 @@ const ProjectProgressBar = () => {
   );
 };
 
-const SortOrderBreadcrumbs = ({ sortPropIndices }) => {
-  const [sections, setSections] = React.useState([]);
-  React.useEffect(() => {
-    setSections(
-      sortPropIndices.map((item) => sortOptions[item].formParams.name)
-    );
-  }, JSON.stringify(sortPropIndices));
-
+const SortOrderBreadcrumbs = ({ sections }) => {
   return (
     <StyledSortDisplay>
-      {sections.map((section) => (
-        <div>{section}</div>
-      ))}
+      <div style={{ marginRight: "1em" }}>Sorted By: </div>
+      <Breadcrumb
+        icon="right angle"
+        sections={sections.map((section) => {
+          return { key: section, content: section };
+        })}
+      />
     </StyledSortDisplay>
   );
 };
