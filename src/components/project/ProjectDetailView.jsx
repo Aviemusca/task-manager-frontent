@@ -6,20 +6,7 @@ import GroupCardList from "./GroupCardList";
 import { ProjectsContext } from "../contexts/ProjectsContext";
 import { GroupsContext } from "../contexts/GroupsContext";
 import { TasksContext } from "../contexts/TasksContext";
-
-const StyledHeader = styled.div`
-  width: 100%;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  border: solid 1px #ccc;
-  border-radius: 5px;
-  background-color: var(--project-container-color);
-`;
-
-const Title = styled.h1`
-  text-align: center;
-  margin: 2em auto;
-`;
+import Header from "./Header";
 
 export const ProjectGrid = styled.div`
   display: grid;
@@ -55,7 +42,7 @@ const ProjectDetailViewContainer = (props) => {
 const ProjectDetailView = ({ project }) => {
   return (
     <div>
-      <Title>{project.title}</Title>
+      <Header project={project} />
       <ProjectGrid>
         <SideBar project={project} />
         <GroupCardList project={project} />
