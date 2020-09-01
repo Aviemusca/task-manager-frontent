@@ -3,37 +3,14 @@ import styled from "styled-components";
 import { Card, Icon, Popup } from "semantic-ui-react";
 import TaskModal from "./TaskModal";
 import { StyledProgressBar } from "../common/progressBar";
+import { CardDates } from "../common/dates";
 import {
   getPriorityColor,
   getDifficultyColor,
   getStateColor,
+  taskStatuses,
+  taskDeadlines,
 } from "../../taskOptions";
-
-import { formatDistanceToNow, format as formatDate } from "date-fns";
-
-const taskStatuses = [
-  {
-    color: "red",
-    iconName: "times circle outline",
-    popupContent: "Not Started",
-  },
-  {
-    color: "blue",
-    iconName: "dot circle outline",
-    popupContent: "In Progress",
-  },
-  {
-    color: "green",
-    iconName: "check circle outline",
-    popupContent: "Completed",
-  },
-];
-
-const taskDeadlines = [
-  { color: "red", popupContent: "Deadline Has Passed!" },
-  { color: "orange", popupContent: "Deadline Under 24h Away!" },
-  { color: "yellow", popupContent: "Deadline Under 48h Away!" },
-];
 
 const StyledHeader = styled.div`
   display: flex;
@@ -75,11 +52,6 @@ const SecondaryProgressBarWrapper = styled.span`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-`;
-
-const StyledDate = styled.div`
-  color: #4c4cd5cc;
-  margin: 0.75em 0;
 `;
 
 const StyledProgressTitle = styled.span`
@@ -164,7 +136,10 @@ const Task = ({ state, setState }) => {
         color={selected && "blue"}
         meta={
           expanded && (
-            <Dates dateCreated={task.dateCreated} deadline={task.deadline} />
+            <CardDates
+              dateCreated={task.dateCreated}
+              deadline={task.deadline}
+            />
           )
         }
         extra={
@@ -185,29 +160,6 @@ const Task = ({ state, setState }) => {
   );
 };
 
-const Dates = ({ dateCreated, deadline }) => {
-  return (
-    <React.Fragment>
-      <DateComponent title="Created" date={dateCreated} />
-      <DateComponent title="Deadline" date={deadline} />
-    </React.Fragment>
-  );
-};
-
-const DateComponent = ({ title, date }) => {
-  const [dateObject, setDateObject] = React.useState(new Date(date));
-  React.useEffect(() => setDateObject(new Date(date)), [date]);
-  return (
-    <Popup
-      content={formatDate(dateObject, "PPPPpppp")}
-      trigger={
-        <StyledDate>
-          {title} {formatDistanceToNow(dateObject, { addSuffix: true })}
-        </StyledDate>
-      }
-    />
-  );
-};
 const Header = ({ task, colors }) => {
   const { title, state } = task;
   return (
