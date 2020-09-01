@@ -8,19 +8,13 @@ import {
   Popup,
   Table,
 } from "semantic-ui-react";
-import styled from "styled-components";
 import uuid from "react-uuid";
 import { TableRowToggle } from "../common/buttons";
+import { StyledTableTitle } from "../common/styles";
 import sortOptions from "./sortOptions";
 
 const arraySort = require("array-sort");
 
-const StyledTableTitle = styled.h2`
-  text-align: center;
-  font-weight: 900;
-  width: 25%;
-  margin: 1em auto;
-`;
 const SortTableContainer = ({ sortProps, setSortProps }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
 

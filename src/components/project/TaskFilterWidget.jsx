@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Slider } from "react-semantic-ui-range";
 import { TasksContext } from "../contexts/TasksContext";
 import { TableRowToggle } from "../common/buttons";
+import { StyledTableTitle } from "../common/styles";
 import filterOptions from "./filterOptions";
 import { replaceItem } from "../../utils/arrays";
 
@@ -20,20 +21,35 @@ const StyledSlider = styled(Slider)`
   width: 80%;
 `;
 const FilterTableContainer = ({ filterProps, setFilterProps }) => {
-  const { managerTasks, projectTasks, setManagerTasks } = React.useContext(
-    TasksContext
-  );
+  const { projectTasks, setManagerTasks } = React.useContext(TasksContext);
 
-  const taskFilter = (taskProp) => {
-    // Filter tasks of given taskProp according to min/max values set in filterProps
-    const [filterProp] = utils.getFilterPropData(taskProp);
-    if (!filterProp.checked) return;
-    let newTasks = [...managerTasks];
-    const minMax = filterProp.params.minMax;
-    newTasks = newTasks.filter(
-      (task) => task[taskProp] >= minMax[0] && task[taskProp] <= minMax[1]
-    );
-    setManagerTasks(newTasks);
+  const filterByStatus = (tasks) => {
+    const [statusFilter] = utils.getFilterPropData("state");
+    const statusProps = Object.keys(statusFilter.checkboxes);
+    const statusChecks = Object.values(statusFilter.checkboxes);
+    statusProps.forEach((status, index) => {
+      if (statusChecks[index])
+        tasks = tasks.filter((task) => task.state === index);
+    });
+    return tasks;
+  };
+
+  const filterTasks = () => {
+    let tasks = [...projectTasks];
+    filterProps.forEach((filter) => {
+      if (filter.checked) {
+        if (filter.prop === "state") {
+          tasks = filterByStatus(tasks);
+        } else {
+          tasks = tasks.filter(
+            (task) =>
+              task[filter.prop] >= filter.minMax[0] &&
+              task[filter.prop] <= filter.minMax[1]
+          );
+        }
+      }
+    });
+    setManagerTasks(tasks);
   };
 
   const utils = {
@@ -49,8 +65,7 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
       const newMinMax = [...minMax];
       minMax.forEach((item, index) => {
         if (!item)
-          newMinMax[index] =
-            filterOptions[filterPropIndex].params.minMax[index];
+          newMinMax[index] = filterOptions[filterPropIndex].minMax[index];
       });
       return newMinMax;
     },
@@ -75,62 +90,51 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
         taskProp
       );
       newMinMax = utils.validateMinMax(filterPropIndex, newMinMax);
-      newFilterProp.params.minMax = newMinMax;
+      newFilterProp.minMax = newMinMax;
       utils.updateFilterProps(newFilterProp, filterPropIndex);
     },
     statusChange(status) {
       // Handling changes in task status
       const [newFilterProp, filterPropIndex] = utils.getFilterPropData("state");
-      newFilterProp.params.checkboxes[status] = !newFilterProp.params
-        .checkboxes[status];
+      newFilterProp.checkboxes[status] = !newFilterProp.checkboxes[status];
       utils.updateFilterProps(newFilterProp, filterPropIndex);
     },
   };
 
-  // Update displayed tasks on changes in respective filterProps
   React.useEffect(() => {
-    taskFilter("priority");
-  }, [JSON.stringify(utils.getFilterPropData("priority")[0].params.minMax)]);
-
-  React.useEffect(() => {
-    taskFilter("difficulty");
-  }, [JSON.stringify(utils.getFilterPropData("difficulty")[0].params.minMax)]);
-
-  React.useEffect(() => {
-    taskFilter("dateCreated");
-  }, [JSON.stringify(utils.getFilterPropData("dateCreated")[0].params.minMax)]);
-
-  React.useEffect(() => {
-    taskFilter("deadline");
-  }, [JSON.stringify(utils.getFilterPropData("deadline")[0].params.minMax)]);
+    filterTasks();
+  }, [JSON.stringify(filterProps)]);
 
   return <FilterTable filterProps={filterProps} handlers={handlers} />;
 };
 
 const FilterTable = ({ filterProps, handlers }) => {
   return (
-    <Table definition celled padded textAlign="center">
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell />
-          <Table.HeaderCell>Filter On</Table.HeaderCell>
-          <Table.HeaderCell>Options</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {filterProps.map((item, index) => (
-          <TableRow
-            key={index}
-            row={index}
-            title={item.params.name}
-            filterOn={item.checked}
-            handleToggleChange={handlers.toggleChange}
-          >
-            {getOptionCell(item, handlers)}
-          </TableRow>
-        ))}
-      </Table.Body>
-    </Table>
+    <React.Fragment>
+      <StyledTableTitle>Task Filter Widget</StyledTableTitle>
+      <Table definition celled padded textAlign="center">
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell />
+            <Table.HeaderCell>Filter On</Table.HeaderCell>
+            <Table.HeaderCell>Options</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {filterProps.map((item, index) => (
+            <TableRow
+              key={index}
+              row={index}
+              title={item.name}
+              filterOn={item.checked}
+              handleToggleChange={handlers.toggleChange}
+            >
+              {getOptionCell(item, handlers)}
+            </TableRow>
+          ))}
+        </Table.Body>
+      </Table>
+    </React.Fragment>
   );
 };
 
@@ -153,14 +157,14 @@ const getOptionCell = (item, handlers) => {
 };
 
 const getDeadlineCell = (item, handleChange) => {
-  const { minMax } = item.params;
+  const { minMax } = item;
   return (
     <DateCell taskProp="deadline" minMax={minMax} handleChange={handleChange} />
   );
 };
 
 const getDateCreatedCell = (item, handleChange) => {
-  const { minMax } = item.params;
+  const { minMax } = item;
   return (
     <DateCell
       taskProp="dateCreated"
@@ -171,11 +175,11 @@ const getDateCreatedCell = (item, handleChange) => {
 };
 
 const getStatusCell = (item, handleChange) => {
-  const { checkboxes } = item.params;
+  const { checkboxes } = item;
   return <StatusCell checkboxes={checkboxes} handleChange={handleChange} />;
 };
 const getDifficultyCell = (item, handleChange) => {
-  const { minMax } = item.params;
+  const { minMax } = item;
   return (
     <DoubleSliderCell
       taskProp="difficulty"
@@ -185,7 +189,7 @@ const getDifficultyCell = (item, handleChange) => {
   );
 };
 const getPriorityCell = (item, handleChange) => {
-  const { minMax } = item.params;
+  const { minMax } = item;
   return (
     <DoubleSliderCell
       taskProp="priority"

@@ -4,6 +4,7 @@ import SideBar from "./SideBar";
 import GroupCardList from "./GroupCardList";
 
 import { ProjectsContext } from "../contexts/ProjectsContext";
+import { GroupsContext } from "../contexts/GroupsContext";
 import { TasksContext } from "../contexts/TasksContext";
 
 const StyledHeader = styled.div`
@@ -31,7 +32,10 @@ export const ProjectGrid = styled.div`
 const ProjectDetailViewContainer = (props) => {
   const { projectSlug } = props.match.params;
   const { projects } = useContext(ProjectsContext);
-  const { getProjectTasks } = useContext(TasksContext);
+  const { setGroups } = useContext(GroupsContext);
+  const { getProjectTasks, setProjectTasks, setManagerTasks } = useContext(
+    TasksContext
+  );
 
   const project = props.location.state
     ? props.location.state.project
@@ -39,6 +43,11 @@ const ProjectDetailViewContainer = (props) => {
 
   React.useEffect(() => {
     getProjectTasks(project.slug);
+    return () => {
+      setProjectTasks([]);
+      setManagerTasks([]);
+      setGroups([]);
+    };
   }, []);
   return <ProjectDetailView project={project} />;
 };
