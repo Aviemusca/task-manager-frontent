@@ -34,12 +34,12 @@ export const getStateColor = (level) => {
 export const taskStatuses = [
   {
     color: "red",
-    iconName: "times circle outline",
+    iconName: "minus circle",
     popupContent: "Not Started",
   },
   {
     color: "blue",
-    iconName: "dot circle outline",
+    iconName: "hourglass half",
     popupContent: "In Progress",
   },
   {

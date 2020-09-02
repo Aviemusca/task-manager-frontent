@@ -19,7 +19,7 @@ const StyledHeader = styled.div`
   height: minmax(2em, 4em);
   overflow: auto;
   padding: 0.25em 0;
-  background: #25779515;
+  background: #25779510;
   border-radius: 5px;
 `;
 
@@ -132,7 +132,17 @@ const Task = ({ state, setState }) => {
           if (!event.ctrlKey && !event.shiftKey) setExpanded(!expanded);
         }}
         header={<Header task={task} colors={state.colors} />}
-        description={expanded && task.description}
+        description={
+          expanded && (
+            <React.Fragment>
+              {" "}
+              <Description description={task.description} />
+              <div style={{ marginTop: "0.5em" }}>
+                Task Group: {task.groupTitle}
+              </div>
+            </React.Fragment>
+          )
+        }
         color={selected && "blue"}
         meta={
           expanded && (
@@ -160,6 +170,13 @@ const Task = ({ state, setState }) => {
   );
 };
 
+const Description = ({ description }) => {
+  return description ? (
+    <div>Description: {description}</div>
+  ) : (
+    <div>Description: None</div>
+  );
+};
 const Header = ({ task, colors }) => {
   const { title, state } = task;
   return (

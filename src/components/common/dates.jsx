@@ -6,7 +6,7 @@ import { formatDistanceToNow, format as formatDate } from "date-fns";
 
 const StyledDate = styled.div`
   color: #4c4cd5cc;
-  margin: 0.75em 0;
+  margin: 0.5em 0;
 `;
 
 export const CardDates = ({ dateCreated, deadline }) => {
