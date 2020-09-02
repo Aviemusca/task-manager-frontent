@@ -7,13 +7,14 @@ import routes from "../../routes";
 
 const TasksContext = React.createContext();
 
+// Provider for the tasks of a given project which should load on
+// entering a project detail view
 function TasksProvider(props) {
-  // Provider for the tasks of a given project
-  const emptyTask = { title: "", description: "" };
   // Tasks loaded from the backend
   const [projectTasks, setProjectTasks] = React.useState([]);
   // Tasks displayed in the manager / side-bar (filtered etc..)
   const [managerTasks, setManagerTasks] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const getProjectTasks = (projectSlug) => {
     axios
@@ -21,6 +22,7 @@ function TasksProvider(props) {
       .then((response) => {
         setProjectTasks(response.data);
       })
+      .then(() => setLoading(false))
       .catch((error) => console.log(error));
   };
 
@@ -73,6 +75,8 @@ function TasksProvider(props) {
   return (
     <TasksContext.Provider
       value={{
+        loading,
+        setLoading,
         projectTasks,
         setProjectTasks,
         managerTasks,

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import SideBar from "./SideBar";
 import GroupCardList from "./GroupCardList";
+import Loader from "../common/loader";
 
 import { ProjectsContext } from "../contexts/ProjectsContext";
 import { GroupsContext } from "../contexts/GroupsContext";
@@ -20,15 +21,20 @@ const ProjectDetailViewContainer = (props) => {
   const { projectSlug } = props.match.params;
   const { projects } = useContext(ProjectsContext);
   const { setGroups } = useContext(GroupsContext);
-  const { getProjectTasks, setProjectTasks, setManagerTasks } = useContext(
-    TasksContext
-  );
+  const {
+    loading,
+    setLoading,
+    getProjectTasks,
+    setProjectTasks,
+    setManagerTasks,
+  } = useContext(TasksContext);
 
   const project = props.location.state
     ? props.location.state.project
     : projects.find((project) => project.slug === projectSlug);
 
   React.useEffect(() => {
+    setLoading(true);
     getProjectTasks(project.slug);
     return () => {
       setProjectTasks([]);
@@ -36,12 +42,13 @@ const ProjectDetailViewContainer = (props) => {
       setGroups([]);
     };
   }, []);
-  return <ProjectDetailView project={project} />;
+  return <ProjectDetailView project={project} loading={loading} />;
 };
 
-const ProjectDetailView = ({ project }) => {
+const ProjectDetailView = ({ project, loading }) => {
   return (
     <div>
+      <Loader active={loading} />
       <Header project={project} />
       <ProjectGrid>
         <SideBar project={project} />
