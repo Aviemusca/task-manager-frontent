@@ -105,6 +105,7 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
     filterTasks();
   }, [JSON.stringify(filterProps)]);
 
+  // Have filter switch turn on automatically when option changes
   return <FilterTable filterProps={filterProps} handlers={handlers} />;
 };
 

@@ -1,13 +1,6 @@
 import React from "react";
 import { TasksContext } from "../contexts/TasksContext";
-import {
-  Dropdown,
-  Icon,
-  Checkbox,
-  Button,
-  Popup,
-  Table,
-} from "semantic-ui-react";
+import { Dropdown, Icon, Button, Popup, Table } from "semantic-ui-react";
 import uuid from "react-uuid";
 import { TableRowToggle } from "../common/buttons";
 import { StyledTableTitle } from "../common/styles";
@@ -17,6 +10,19 @@ const arraySort = require("array-sort");
 
 const SortTableContainer = ({ sortProps, setSortProps }) => {
   const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
+
+  const sortTasks = () => {
+    const newTasks = [...projectTasks];
+    arraySort(
+      newTasks,
+      sortProps.map((sortProp) => {
+        return sortProp.compareFunc(sortProp.prop, {
+          reverse: sortProp.reverse,
+        });
+      })
+    );
+    setProjectTasks(newTasks);
+  };
 
   const handlers = {
     // Adding a new sortProp/table row
@@ -41,19 +47,10 @@ const SortTableContainer = ({ sortProps, setSortProps }) => {
       newSortProps[row].reverse = !newSortProps[row].reverse;
       setSortProps(newSortProps);
     },
-    sortTasks() {
-      const newTasks = [...projectTasks];
-      arraySort(
-        newTasks,
-        sortProps.map((sortProp) => {
-          return sortProp.compareFunc(sortProp.prop, {
-            reverse: sortProp.reverse,
-          });
-        })
-      );
-      setProjectTasks(newTasks);
-    },
   };
+  React.useEffect(() => {
+    sortTasks();
+  }, [JSON.stringify(sortProps)]);
 
   return <SortTable sortProps={sortProps} handlers={handlers} />;
 };
@@ -85,16 +82,15 @@ const SortTable = ({ sortProps, handlers }) => {
           ))}
         </Table.Body>
       </Table>
-      <Buttons
+      <AddButton
         numSortProps={sortProps.length}
         handleAddSortProp={handlers.addSortProp}
-        handleSort={handlers.sortTasks}
       />
     </React.Fragment>
   );
 };
 
-const Buttons = ({ numSortProps, handleAddSortProp, handleSort }) => {
+const AddButton = ({ numSortProps, handleAddSortProp }) => {
   return (
     <React.Fragment>
       {numSortProps < sortOptions.length && (
@@ -107,9 +103,6 @@ const Buttons = ({ numSortProps, handleAddSortProp, handleSort }) => {
           }
         />
       )}
-      <Button primary onClick={handleSort}>
-        Sort
-      </Button>
     </React.Fragment>
   );
 };
@@ -120,7 +113,6 @@ const SortRow = ({
   handleReverseToggle,
   handleRemoveSortProp,
 }) => {
-  const [rowName, setRowName] = React.useState("");
   const { name, defaultFirst, defaultLast, reverse } = sortProp;
   const sortByPopup = [
     "Sort by 1st property",
@@ -128,15 +120,12 @@ const SortRow = ({
     "When 1st and 2nd properties are equal, sort by 3rd property",
     "When 1st, 2nd and 3rd properties are equal, sort by 4th property",
   ];
-  React.useEffect(() => {
-    row === 0 ? setRowName("Sort By") : setRowName("Then By");
-  }, []);
 
   return (
     <Table.Row>
       <Popup
         content={sortByPopup[row]}
-        trigger={<Table.Cell>{rowName}</Table.Cell>}
+        trigger={<Table.Cell>{row === 0 ? "Sort By" : "Then By"}</Table.Cell>}
       />
       <Table.Cell>
         <DropDownWidget

@@ -1,6 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { Popup, Button, Modal, Breadcrumb, Label } from "semantic-ui-react";
+import {
+  Popup,
+  Icon,
+  Button,
+  Modal,
+  Breadcrumb,
+  Label,
+} from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
 import { ProgressBar } from "../common/progressBar";
 import {
@@ -24,8 +31,8 @@ const StyledSortDisplay = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-
   text-color: #777;
+  margin: 1em 0;
 `;
 const SideBarContainer = ({ project }) => {
   const [showOptions, setShowOptions] = React.useState(false);
@@ -85,7 +92,7 @@ const SideBar = ({ state, setState }) => {
     >
       <Header setModes={setModes} />
       <Modals state={state} setState={setState} />
-      <ProjectProgressBar />
+      <ManagerProgressBar />
       <TaskOptionButtons setModes={setModes} />
       <SortOrderBreadcrumbs
         sections={state.sortProps.map((item) => item.name)}
@@ -218,14 +225,16 @@ const TaskOptionButtons = ({ setModes }) => {
     </div>
   );
 };
-const ProjectProgressBar = () => {
-  const { projectTasks } = React.useContext(TasksContext);
+const ManagerProgressBar = () => {
+  const { managerTasks } = React.useContext(TasksContext);
   return (
     <Popup
-      trigger={<ProgressBar items={projectTasks} />}
-      flowing
-      hoverable
-      content="Here"
+      trigger={
+        <div>
+          <ProgressBar items={managerTasks} />
+        </div>
+      }
+      content="Completion of filtered tasks"
     />
   );
 };
@@ -233,12 +242,22 @@ const ProjectProgressBar = () => {
 const SortOrderBreadcrumbs = ({ sections }) => {
   return (
     <StyledSortDisplay>
-      <div style={{ marginRight: "1em" }}>Sorted By: </div>
-      <Breadcrumb
-        icon="right angle"
-        sections={sections.map((section) => {
-          return { key: section, content: section };
-        })}
+      <Popup
+        content="Sorted By"
+        trigger={
+          <Label.Group circular inverted size="large">
+            {sections.map((section, index) => {
+              return index === sections.length - 1 ? (
+                <Label content={section} />
+              ) : (
+                <React.Fragment>
+                  <Label content={section} />
+                  <Icon name="right angle" />
+                </React.Fragment>
+              );
+            })}
+          </Label.Group>
+        }
       />
     </StyledSortDisplay>
   );
