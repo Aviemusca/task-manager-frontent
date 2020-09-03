@@ -24,8 +24,8 @@ import DeleteModal from "./DeleteProjectModal";
 import AddGroupModal from "./AddGroupModal";
 import SortModal from "./SortModal";
 import sortOptions from "./sortOptions";
-import filterOptions from "./filterOptions";
 import FilterModal from "./FilterModal";
+import { FiltersContext } from "../contexts/FiltersContext";
 
 const StyledSortDisplay = styled.div`
   display: flex;
@@ -43,9 +43,7 @@ const SideBarContainer = ({ project }) => {
   const [filterMode, setFilterMode] = React.useState(false);
   const [archiveMode, setArchiveMode] = React.useState(false);
   const [sortProps, setSortProps] = React.useState([sortOptions[0]]);
-  const [filterProps, setFilterProps] = React.useState(
-    JSON.parse(JSON.stringify(filterOptions))
-  );
+  const { filterProps, setFilterProps } = React.useContext(FiltersContext);
 
   const state = {
     modes: {

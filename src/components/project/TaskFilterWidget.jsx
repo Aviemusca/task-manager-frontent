@@ -4,6 +4,7 @@ import { DateTimeInput } from "semantic-ui-calendar-react";
 import styled from "styled-components";
 import { Slider } from "react-semantic-ui-range";
 import { TasksContext } from "../contexts/TasksContext";
+import { FiltersContext } from "../contexts/FiltersContext";
 import { TableRowToggle } from "../common/buttons";
 import { StyledTableTitle } from "../common/styles";
 import filterOptions from "./filterOptions";
@@ -20,61 +21,11 @@ const StyledInput = styled(Input)`
 const StyledSlider = styled(Slider)`
   width: 80%;
 `;
-const FilterTableContainer = ({ filterProps, setFilterProps }) => {
+const FilterTableContainer = (props) => {
   const { projectTasks, setManagerTasks } = React.useContext(TasksContext);
-
-  const filterByStatus = (tasks) => {
-    const [statusFilter] = utils.getFilterPropData("state");
-    const statusProps = Object.keys(statusFilter.checkboxes);
-    const statusChecks = Object.values(statusFilter.checkboxes);
-    statusProps.forEach((status, index) => {
-      if (statusChecks[index])
-        tasks = tasks.filter((task) => task.state === index);
-    });
-    return tasks;
-  };
-
-  const filterTasks = () => {
-    let tasks = [...projectTasks];
-    filterProps.forEach((filter) => {
-      if (filter.checked) {
-        if (filter.prop === "state") {
-          tasks = filterByStatus(tasks);
-        } else {
-          tasks = tasks.filter(
-            (task) =>
-              task[filter.prop] >= filter.minMax[0] &&
-              task[filter.prop] <= filter.minMax[1]
-          );
-        }
-      }
-    });
-    setManagerTasks(tasks);
-  };
-
-  const utils = {
-    // utility functions
-    getFilterPropData(taskProp) {
-      // Returns the filterProp data for a given taskProp
-      const filterProp = filterProps.find((item) => item.prop === taskProp);
-      const filterPropIndex = filterProps.indexOf(filterProp);
-      return [filterProp, filterPropIndex];
-    },
-    validateMinMax(filterPropIndex, minMax) {
-      // If provided min/max are blank -> return default value
-      const newMinMax = [...minMax];
-      minMax.forEach((item, index) => {
-        if (!item)
-          newMinMax[index] = filterOptions[filterPropIndex].minMax[index];
-      });
-      return newMinMax;
-    },
-    updateFilterProps(newFilterProp, filterPropIndex) {
-      const newFilterProps = [...filterProps];
-      replaceItem(newFilterProps, newFilterProp, filterPropIndex);
-      setFilterProps(newFilterProps);
-    },
-  };
+  const { filterProps, setFilterProps, filterTasks, utils } = React.useContext(
+    FiltersContext
+  );
 
   const handlers = {
     // All onChange event handlers for the task filter widget
@@ -102,10 +53,9 @@ const FilterTableContainer = ({ filterProps, setFilterProps }) => {
   };
 
   React.useEffect(() => {
-    filterTasks();
+    setManagerTasks(filterTasks(projectTasks));
   }, [JSON.stringify(filterProps)]);
 
-  // Have filter switch turn on automatically when option changes
   return <FilterTable filterProps={filterProps} handlers={handlers} />;
 };
 

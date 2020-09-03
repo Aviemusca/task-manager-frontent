@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Popup, List, Button, Icon } from "semantic-ui-react";
 import Task from "./Task";
 import { TasksContext } from "../contexts/TasksContext";
+import { FiltersContext } from "../contexts/FiltersContext";
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -25,10 +26,12 @@ const SideBarTaskListContainer = () => {
   const { projectTasks, managerTasks, setManagerTasks } = React.useContext(
     TasksContext
   );
+  const { filterTasks } = React.useContext(FiltersContext);
+
   const initialShownTasks = 5;
 
   React.useEffect(() => {
-    setManagerTasks(projectTasks);
+    setManagerTasks(filterTasks(projectTasks));
   }, [JSON.stringify(projectTasks)]);
 
   return (
