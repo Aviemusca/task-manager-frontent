@@ -97,6 +97,7 @@ const SideBar = ({ state, setState }) => {
       <SortOrderBreadcrumbs
         sections={state.sortProps.map((item) => item.name)}
       />
+      <FilterTags filterProps={state.filterProps} />
       <SideBarTaskList project={project} />
     </StyledCard>
   );
@@ -260,6 +261,22 @@ const SortOrderBreadcrumbs = ({ sections }) => {
         }
       />
     </StyledSortDisplay>
+  );
+};
+
+const FilterTags = ({ filterProps }) => {
+  const activeFilters = filterProps.filter((prop) => prop.checked);
+  return (
+    <Popup
+      content="Active Filters"
+      trigger={
+        <Label.Group size="large" tag>
+          {activeFilters.map((filter) => (
+            <Label tag>{filter.name}</Label>
+          ))}
+        </Label.Group>
+      }
+    />
   );
 };
 

@@ -11,10 +11,12 @@ const ButtonWrapper = styled.div`
 `;
 const GroupTaskListContainer = ({ group }) => {
   const { projectTasks } = React.useContext(TasksContext);
+  const initialShownTasks = 0;
 
   return (
     <TaskListContainer
       tasks={projectTasks.filter((task) => task.groupId === group.id)}
+      initialShownTasks={initialShownTasks}
     />
   );
 };
@@ -23,43 +25,49 @@ const SideBarTaskListContainer = () => {
   const { projectTasks, managerTasks, setManagerTasks } = React.useContext(
     TasksContext
   );
+  const initialShownTasks = 5;
 
   React.useEffect(() => {
     setManagerTasks(projectTasks);
   }, [JSON.stringify(projectTasks)]);
 
-  return <TaskListContainer tasks={managerTasks} />;
+  return (
+    <TaskListContainer
+      tasks={managerTasks}
+      initialShownTasks={initialShownTasks}
+    />
+  );
 };
 
-const TaskListContainer = ({ tasks }) => {
-  const [numTasks, setNumTasks] = React.useState(0);
+const TaskListContainer = ({ tasks, initialShownTasks }) => {
+  const [numTasksShown, setNumTasksShown] = React.useState(initialShownTasks);
 
   const showInc = 5;
 
   const handlers = {
-    showAll: () => setNumTasks(tasks.length),
-    hideAll: () => setNumTasks(0),
-    increment: () => setNumTasks(numTasks + showInc),
-    decrement: () => setNumTasks(numTasks - showInc),
+    showAll: () => setNumTasksShown(tasks.length),
+    hideAll: () => setNumTasksShown(0),
+    increment: () => setNumTasksShown(numTasksShown + showInc),
+    decrement: () => setNumTasksShown(numTasksShown - showInc),
   };
 
   return (
-    <Accordion tasks={tasks} numTasks={numTasks} handlers={handlers}>
+    <Accordion tasks={tasks} numTasksShown={numTasksShown} handlers={handlers}>
       {" "}
-      <TaskList tasks={tasks.filter((task, index) => index < numTasks)} />
+      <TaskList tasks={tasks.filter((task, index) => index < numTasksShown)} />
     </Accordion>
   );
 };
 
-const Accordion = ({ tasks, numTasks, handlers, children }) => {
-  if (numTasks <= 0)
+const Accordion = ({ tasks, numTasksShown, handlers, children }) => {
+  if (numTasksShown <= 0)
     return (
       <ShowButtons
         onShowAll={handlers.showAll}
         onShowInc={handlers.increment}
       />
     );
-  if (numTasks >= tasks.length)
+  if (numTasksShown >= tasks.length)
     return (
       <React.Fragment>
         <HideButtons

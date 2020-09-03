@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Label } from "semantic-ui-react";
 
 export const CustomFormContainerSm = styled.div`
   width: 40%;
@@ -71,4 +72,10 @@ export const StyledTableTitle = styled.h2`
   font-weight: 900;
   width: 25%;
   margin: 1em auto;
+`;
+
+export const StyledLabel = styled(Label)`
+  &&& > .label {
+    color: green !important;
+  }
 `;

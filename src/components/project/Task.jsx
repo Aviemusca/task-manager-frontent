@@ -40,10 +40,10 @@ const StyledColorBoxes = styled.div`
 
 const StyledColorBox = styled.span`
   display: inline-block;
-  width: 20px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   margin: 0 5px;
-  border-radius: 5px;
+  border-radius: 25px;
   border: solid 1px #777;
   background: rgba(${(props) => `${props.color}`});
 `;

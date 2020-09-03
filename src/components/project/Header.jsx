@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledCard } from "../common/styles";
+import { StyledCard, StyledLabel } from "../common/styles";
 import { CardDates } from "../common/dates";
 import { ProgressBar } from "../common/progressBar";
 import { Card, Grid, Segment, Label, Popup } from "semantic-ui-react";

@@ -5,7 +5,7 @@ export const getPriorityColor = (level) => {
   const r = 255;
   const g = Math.floor(255 * (1 - (level - 1) / steps));
   const b = 0;
-  const a = 0.7;
+  const a = 1;
   return [r, g, b, a];
 };
 
@@ -13,10 +13,10 @@ export const getDifficultyColor = (level) => {
   // returns the color of the difficulty level, green -> red from low -> high
   // assumes level starts at 1
   const steps = 9;
-  const r = Math.floor(255 * ((level - 1) / steps));
+  const r = 0;
   const g = Math.floor(255 * (1 - (level - 1) / steps));
-  const b = 0;
-  const a = 0.7;
+  const b = Math.floor(255 * ((level - 1) / steps));
+  const a = 1;
   return [r, g, b, a];
 };
 
