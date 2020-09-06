@@ -4,6 +4,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import HomeView from "./components/HomeView";
 import AboutView from "./components/AboutView";
+import ContactView from "./components/ContactView";
 import LoginView from "./components/auth/LoginView";
 import SignUpView from "./components/auth/SignUpView";
 import ProjectsView from "./components/projects/ProjectsView";
@@ -38,6 +39,7 @@ function App(props) {
         <AppContainer>
           <Route exact path={routes.pages.home} component={HomeView} />
           <Route exact path={routes.pages.about} component={AboutView} />
+          <Route exact path={routes.pages.contact} component={ContactView} />
           <ProjectsProvider>
             <Route
               exact

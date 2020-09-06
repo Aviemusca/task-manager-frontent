@@ -1,4 +1,5 @@
 import React from "react";
+import { TasksContext } from "../contexts/TasksContext";
 import styled from "styled-components";
 import { Card, Icon, Popup } from "semantic-ui-react";
 import TaskModal from "./TaskModal";
@@ -65,6 +66,7 @@ const TaskContainer = ({ tsk }) => {
   const [stateColor, setStateColor] = React.useState([]);
   const [difficultyColor, setDifficultyColor] = React.useState([]);
   const [selected, setSelected] = React.useState(false);
+  const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
 
   React.useEffect(() => {
     setPriorityColor(getPriorityColor(task.priority));
@@ -86,6 +88,7 @@ const TaskContainer = ({ tsk }) => {
     if (event.shiftKey) setModalOpen(true);
     if (event.ctrlKey) setSelected(!selected);
   };
+
   const closeModal = () => setModalOpen(false);
 
   const state = {

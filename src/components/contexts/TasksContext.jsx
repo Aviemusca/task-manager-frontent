@@ -14,6 +14,8 @@ function TasksProvider(props) {
   const [projectTasks, setProjectTasks] = React.useState([]);
   // Tasks displayed in the manager / side-bar (filtered etc..)
   const [managerTasks, setManagerTasks] = React.useState([]);
+  // Archived tasks displayed in the manager Archives
+  const [archivedTasks, setArchivedTasks] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
   const getProjectTasks = (projectSlug) => {
@@ -81,6 +83,8 @@ function TasksProvider(props) {
         setProjectTasks,
         managerTasks,
         setManagerTasks,
+        archivedTasks,
+        setArchivedTasks,
         getProjectTasks,
         postTask,
         patchTask,

@@ -5,7 +5,6 @@ import GroupCard from "./GroupCard";
 import styled from "styled-components";
 
 import { GroupsContext } from "../contexts/GroupsContext";
-
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);

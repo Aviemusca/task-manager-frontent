@@ -7,8 +7,6 @@ import { TasksContext } from "../contexts/TasksContext";
 import { FiltersContext } from "../contexts/FiltersContext";
 import { TableRowToggle } from "../common/buttons";
 import { StyledTableTitle } from "../common/styles";
-import filterOptions from "./filterOptions";
-import { replaceItem } from "../../utils/arrays";
 
 const CheckBoxWrapper = styled.div`
   display: flex;

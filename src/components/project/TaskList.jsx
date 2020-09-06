@@ -148,7 +148,7 @@ const TaskList = ({ tasks }) => {
   );
 };
 export {
-  TaskList,
+  TaskListContainer as TaskList,
   GroupTaskListContainer as GroupTaskList,
   SideBarTaskListContainer as SideBarTaskList,
 };

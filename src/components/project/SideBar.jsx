@@ -1,14 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import {
-  Popup,
-  Icon,
-  Button,
-  Modal,
-  Breadcrumb,
-  Label,
-} from "semantic-ui-react";
+import { Popup, Icon, Button, Modal, Label } from "semantic-ui-react";
 import { TasksContext } from "../contexts/TasksContext";
+import { FiltersContext } from "../contexts/FiltersContext";
 import { ProgressBar } from "../common/progressBar";
 import {
   StyledCard,
@@ -20,12 +14,12 @@ import {
 import { MiniIconButton } from "../common/buttons";
 import { SideBarTaskList } from "./TaskList";
 import { UpdateProjectForm } from "./UpdateProjectForm";
+import Archive from "./Archive";
 import DeleteModal from "./DeleteProjectModal";
 import AddGroupModal from "./AddGroupModal";
 import SortModal from "./SortModal";
 import sortOptions from "./sortOptions";
 import FilterModal from "./FilterModal";
-import { FiltersContext } from "../contexts/FiltersContext";
 
 const StyledSortDisplay = styled.div`
   display: flex;
@@ -35,7 +29,6 @@ const StyledSortDisplay = styled.div`
   margin: 1em 0;
 `;
 const SideBarContainer = ({ project }) => {
-  const [showOptions, setShowOptions] = React.useState(false);
   const [addGroupMode, setAddGroupMode] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
   const [deleteMode, setDeleteMode] = React.useState(false);
@@ -44,6 +37,7 @@ const SideBarContainer = ({ project }) => {
   const [archiveMode, setArchiveMode] = React.useState(false);
   const [sortProps, setSortProps] = React.useState([sortOptions[0]]);
   const { filterProps, setFilterProps } = React.useContext(FiltersContext);
+  const { projectTasks, patchTask } = React.useContext(TasksContext);
 
   const state = {
     modes: {
@@ -54,7 +48,6 @@ const SideBarContainer = ({ project }) => {
       filterMode,
       archiveMode,
     },
-    showOptions,
     sortProps,
     filterProps,
     project,
@@ -69,29 +62,49 @@ const SideBarContainer = ({ project }) => {
       setFilterMode,
       setArchiveMode,
     },
-    setShowOptions,
     setSortProps,
     setFilterProps,
   };
-  return <SideBar state={state} setState={setState} />;
+
+  const handleArchiveTasks = () => {
+    projectTasks.forEach((task) => {
+      if (task.selected) {
+        const newTask = [...task];
+        newTask.archived = true;
+        patchTask(newTask);
+      }
+    });
+  };
+  return (
+    <SideBar
+      state={state}
+      setState={setState}
+      archiveTasks={handleArchiveTasks}
+    />
+  );
 };
-const SideBar = ({ state, setState }) => {
+const SideBar = ({ state, setState, archiveTasks }) => {
+  return (
+    <div>
+      <ProjectManager
+        state={state}
+        setState={setState}
+        archiveTasks={archiveTasks}
+      />
+      <Archive />
+    </div>
+  );
+};
+const ProjectManager = ({ state, setState, archiveTasks }) => {
   const { project } = state;
-  const { setShowOptions, setModes } = setState;
-  const { setAddGroupMode } = setState.setModes;
+  const { setModes } = setState;
 
   return (
-    <StyledCard
-      onMouseOver={() => setShowOptions(true)}
-      onMouseLeave={() => {
-        setShowOptions(false);
-        setAddGroupMode(false);
-      }}
-    >
+    <StyledCard>
       <Header setModes={setModes} />
       <Modals state={state} setState={setState} />
       <ManagerProgressBar />
-      <TaskOptionButtons setModes={setModes} />
+      <TaskOptionButtons setModes={setModes} archiveTasks={archiveTasks} />
       <SortOrderBreadcrumbs
         sections={state.sortProps.map((item) => item.name)}
       />
@@ -200,7 +213,7 @@ const ProjectOptionButtons = ({ setModes }) => {
     </div>
   );
 };
-const TaskOptionButtons = ({ setModes }) => {
+const TaskOptionButtons = ({ setModes, archiveTasks }) => {
   const { setSortMode, setFilterMode, setArchiveMode } = setModes;
   return (
     <div>
@@ -216,7 +229,7 @@ const TaskOptionButtons = ({ setModes }) => {
           popupContent={"Filter Tasks"}
         />
         <MiniIconButton
-          handleClick={() => setArchiveMode(true)}
+          handleClick={() => archiveTasks()}
           iconName={"archive"}
           popupContent={"Archive Selected Tasks"}
         />

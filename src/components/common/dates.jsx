@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { formatDistanceToNow, format as formatDate } from "date-fns";
 
 const StyledDate = styled.div`
+  display: table;
   color: #4c4cd5cc;
   margin: 0.5em 0;
 `;

@@ -42,6 +42,11 @@ export const CustomFormFooter = styled.p`
   color: #777;
 `;
 
+export const CustomFormSubText = styled.p`
+  margin-top: 0.25em;
+  color: #777;
+`;
+
 export const StyledCard = styled.div`
   width: 100%;
   border: solid 1px #ccc;
