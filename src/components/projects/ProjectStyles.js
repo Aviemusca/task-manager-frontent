@@ -15,28 +15,28 @@ export const CardHovered = styled.div`
   box-shadow: 8px 6px 0px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 `;
 export const CardTitle = styled.h2`
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   text-align: center;
-  padding: 0.5em 0;
+  padding: 0.5em;
   border-bottom: solid 1px #bbb;
 `;
 
-export const CardSubTitle = styled.h4`
-  text-color: #777;
+export const CardSubTitle = styled.div`
+  margin: 1em 0;
 `;
 
 export const CardDescription = styled.div`
-  width: 80%;
-  margin: 0 auto;
+  margin: 1em 0;
 `;
 
 export const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto;
-  grid-gap: 3em;
+  grid-gap: 5em;
   justify-items: center;
+  margin-top: 4em;
 `;
 
 export const Header = styled.div`

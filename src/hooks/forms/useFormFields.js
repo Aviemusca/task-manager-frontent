@@ -53,9 +53,9 @@ export const useFormFieldsWithErrors = (
     setErrors({ ...errors, [errorName]: error });
   };
 
-  const handleChange = (event, error) => {
+  const handleChange = (event, errorProps) => {
     if (formSubmitted) setFormSubmitted(false);
-    validate(event.target.value, error);
+    validate(event.target.value, errorProps);
     setFields({ ...fields, [event.target.name]: event.target.value });
   };
 
