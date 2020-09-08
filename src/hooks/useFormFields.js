@@ -33,28 +33,29 @@ export const useFormField = (initialState, validationMethod) => {
 
   return [
     field,
+    setField,
+    error,
+    setError,
     function (event) {
       setField(event.target.value);
     },
-    error,
-    setError,
   ];
 };
 
 export const useEmailFormField = (initialState) => {
-  const [email, handleChange, error] = useFormField(
+  const [email, setEmail, error, setError, handleChange] = useFormField(
     initialState,
     validateEmailInput
   );
 
-  return [email, handleChange, error];
+  return [email, setEmail, error, setError, handleChange];
 };
 
 export const useTextFormField = (initialState) => {
-  const [text, handleChange, error] = useFormField(
+  const [text, setText, error, setError, handleChange] = useFormField(
     initialState,
     validateTextInput
   );
 
-  return [text, handleChange, error];
+  return [text, setText, error, setError, handleChange];
 };

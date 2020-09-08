@@ -54,8 +54,8 @@ export const StyledCard = styled.div`
   background-color: var(--project-container-color);
   padding: 1em 1.5em;
   &:hover {
-    box-shadow: 8px 6px 0px 0 rgba(0, 0, 0, 0.3),
-      0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3),
+      6px 6px 6px 6px rgba(0, 0, 0, 0.19);
   }
 `;
 

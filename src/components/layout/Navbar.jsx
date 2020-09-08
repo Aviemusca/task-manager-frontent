@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Dropdown, Image, Menu } from "semantic-ui-react";
+import { Container, Dropdown, Image, Menu, Icon } from "semantic-ui-react";
+import AddProjectModal from "../projects/AddProjectModal";
 import { NavLink } from "react-router-dom";
 import routes from "../../routes";
 
@@ -28,18 +29,30 @@ const handleLogout = (setUserCredentials) => {
 };
 
 const Navbar = ({ userCredentials, setUserCredentials }) => {
+  const [addProjectMode, setAddProjectMode] = React.useState(false);
+
   const isAuthenticated = () => userCredentials.token;
   const injectAuthenticationMenuItems = () => {
     return isAuthenticated() ? (
-      <Dropdown item simple text={userCredentials.username}>
-        <Dropdown.Menu>
-          <Dropdown.Item>Profile</Dropdown.Item>
-          <Dropdown.Item>Change Password</Dropdown.Item>
-          <Dropdown.Item onClick={() => handleLogout(setUserCredentials)}>
-            Logout
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+      <React.Fragment>
+        <AddProjectModal
+          modalOpen={addProjectMode}
+          closeModal={() => setAddProjectMode(false)}
+        />
+        <Menu.Item as="a" onClick={() => setAddProjectMode(true)}>
+          <Icon name="plus" />
+          Project
+        </Menu.Item>
+        <Dropdown item simple text={userCredentials.username}>
+          <Dropdown.Menu>
+            <Dropdown.Item>Profile</Dropdown.Item>
+            <Dropdown.Item>Change Password</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleLogout(setUserCredentials)}>
+              Logout
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </React.Fragment>
     ) : (
       <React.Fragment>
         {injectMenuLinkItem("Login", routes.pages.login)}

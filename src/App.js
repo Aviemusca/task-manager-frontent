@@ -32,15 +32,15 @@ function App(props) {
   return (
     <React.Fragment>
       <BrowserRouter>
-        <Navbar
-          userCredentials={userCredentials}
-          setUserCredentials={setUserCredentials}
-        />
-        <AppContainer>
-          <Route exact path={routes.pages.home} component={HomeView} />
-          <Route exact path={routes.pages.about} component={AboutView} />
-          <Route exact path={routes.pages.contact} component={ContactView} />
-          <ProjectsProvider>
+        <ProjectsProvider>
+          <Navbar
+            userCredentials={userCredentials}
+            setUserCredentials={setUserCredentials}
+          />
+          <AppContainer>
+            <Route exact path={routes.pages.home} component={HomeView} />
+            <Route exact path={routes.pages.about} component={AboutView} />
+            <Route exact path={routes.pages.contact} component={ContactView} />
             <Route
               exact
               path={routes.pages.projects.list}
@@ -64,20 +64,20 @@ function App(props) {
                 </FiltersProvider>
               </TasksProvider>
             </GroupsProvider>
-          </ProjectsProvider>
-          <Route
-            exact
-            path={routes.pages.login}
-            render={(props) => (
-              <LoginView
-                {...props}
-                userCredentials={userCredentials}
-                setUserCredentials={setUserCredentials}
-              />
-            )}
-          />
-          <Route exact path={routes.pages.signup} component={SignUpView} />
-        </AppContainer>
+            <Route
+              exact
+              path={routes.pages.login}
+              render={(props) => (
+                <LoginView
+                  {...props}
+                  userCredentials={userCredentials}
+                  setUserCredentials={setUserCredentials}
+                />
+              )}
+            />
+            <Route exact path={routes.pages.signup} component={SignUpView} />
+          </AppContainer>
+        </ProjectsProvider>
       </BrowserRouter>
     </React.Fragment>
   );

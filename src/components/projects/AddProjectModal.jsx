@@ -5,7 +5,7 @@ import { CustomFormContainerLg, CustomFormTitle } from "../common/styles";
 
 const AddProjectModal = ({ modalOpen, closeModal }) => {
   return (
-    <Modal open={modalOpen} onClose={closeModal}>
+    <Modal open={modalOpen} onClose={closeModal} closeIcon>
       <Modal.Content>
         <CustomFormContainerLg>
           <CustomFormTitle>New Project</CustomFormTitle>

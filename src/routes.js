@@ -3,6 +3,7 @@ const baseServerUrl = "http://localhost:8000/";
 const baseClientProjectsUrl = "/projects/";
 
 const baseServerProjectsUrl = baseServerUrl + "projects/";
+const baseServerContactsUrl = baseServerUrl + "contacts/";
 const baseServerAccountsUrl = baseServerUrl + "accounts/";
 
 const serverProjectDetailUrl = (projectSlug) =>
@@ -55,6 +56,9 @@ const routes = {
     accounts: {
       viewset: baseServerAccountsUrl + "viewset/",
       authToken: baseServerAccountsUrl + "auth-token/",
+    },
+    contacts: {
+      create: baseServerContactsUrl + "create/",
     },
     projects: {
       viewset: baseServerProjectsUrl + "viewset/",

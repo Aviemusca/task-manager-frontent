@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
-import {
-  Card,
-  CardHovered,
-  CardTitle,
-  CardSubTitle,
-  CardDescription,
-} from "./ProjectStyles";
+import { CardTitle, CardSubTitle, CardDescription } from "./ProjectStyles";
+import { StyledCard } from "../common/styles";
 
 import routes from "../../routes";
 
 const ProjectCard = ({ project }) => {
   const { title, dateCreated, description, slug } = project;
-  const [hovered, setHovered] = useState(false);
   return (
-    <CardHovered>
+    <StyledCard>
       <NavLink
         to={{
           pathname: routes.pages.projects.detail(slug),
@@ -28,7 +22,7 @@ const ProjectCard = ({ project }) => {
 
       <CardSubTitle>{dateCreated}</CardSubTitle>
       <CardDescription>{description}</CardDescription>
-    </CardHovered>
+    </StyledCard>
   );
 };
 
