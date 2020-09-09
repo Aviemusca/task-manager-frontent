@@ -123,7 +123,7 @@ const TaskContainer = ({ tsk }) => {
 };
 
 const Task = ({ state, setState }) => {
-  const { task, expanded, selected, modalOpen, deadlineStatus } = state;
+  const { task, expanded, selected, modalOpen } = state;
   const { setTask, setExpanded } = setState;
   const { closeModal } = setState.setModal;
 
@@ -328,3 +328,4 @@ const SecondaryProgressBars = ({ task, colors }) => {
   );
 };
 export default TaskContainer;
+export { Task };

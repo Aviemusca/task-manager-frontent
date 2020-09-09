@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Task } from "./project/Task";
 
 class HomeView extends Component {
   constructor(props) {
