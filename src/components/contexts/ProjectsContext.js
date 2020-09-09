@@ -19,11 +19,8 @@ function ProjectsProvider(props) {
   }, [projects.length]);
 
   const fetchProjects = () => {
-    const axiosGetOptions = axiosOptions;
-    axiosGetOptions.method = "GET";
-    axiosGetOptions.url = routes.api.projects.viewset;
-
-    axios(axiosGetOptions)
+    axios
+      .get(routes.api.projects.viewset, axiosHeaders)
       .then((response) => {
         setProjects(response.data);
       })
@@ -35,11 +32,8 @@ function ProjectsProvider(props) {
   };
 
   const postNewProject = () => {
-    const axiosPostOptions = axiosOptions;
-    axiosPostOptions.method = "POST";
-    axiosPostOptions.url = routes.api.projects.viewset;
-    axiosPostOptions.data = newProject;
-    axios(axiosPostOptions)
+    axios
+      .post(routes.api.projects.viewset, newProject, axiosHeaders)
       .then(() => {
         setProjects([...projects, newProject]);
       })
@@ -47,10 +41,8 @@ function ProjectsProvider(props) {
   };
 
   const deleteProject = (projectSlug) => {
-    const axiosDeleteOptions = axiosOptions;
-    axiosDeleteOptions.method = "DELETE";
-    axiosDeleteOptions.url = routes.api.projects.detail(projectSlug);
-    axios(axiosDeleteOptions)
+    axios
+      .delete(routes.api.projects.detail(projectSlug), axiosHeaders)
       .then(() => {
         setProjects(projects.filter((project) => project.slug !== projectSlug));
       })
