@@ -5,10 +5,10 @@ import AddProjectModal from "../projects/AddProjectModal";
 import { NavLink } from "react-router-dom";
 import routes from "../../routes";
 
-const NavWrapper = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
+const NavWrapper = styled.span`
+  width: 100%;
+  padding: 0 1em;
+  margin: 0 auto;
 `;
 
 const emptyCredentials = {
@@ -19,7 +19,7 @@ const emptyCredentials = {
 
 const NavbarContainer = ({ userCredentials, setUserCredentials }) => {
   const [addProjectMode, setAddProjectMode] = React.useState(false);
-  const [activeItem, setActiveItem] = React.useState("Home");
+  const [activeItem, setActiveItem] = React.useState("home");
 
   const handlers = {
     itemClick: (e, { name }) => setActiveItem(name),
@@ -46,55 +46,86 @@ const Navbar = ({
   addProjectMode,
   setAddProjectMode,
   activeItem,
-  setActiveItem,
   handlers,
 }) => (
   <div className="bg-gradient">
-    <Menu fixed="top" inverted>
+    <Menu fixed="top" inverted pointing>
       <Container>
-        <NavWrapper>
-          <BaseMenuItems />
+        <BaseMenuItems
+          activeItem={activeItem}
+          handleClick={handlers.itemClick}
+        />
+        <Menu.Menu position="right">
           {userCredentials.token ? (
             <AuthenticatedMenuItems
               addProjectMode={addProjectMode}
               setAddProjectMode={setAddProjectMode}
               userCredentials={userCredentials}
-              handleLogout={handlers.logout}
+              activeItem={activeItem}
+              handlers={handlers}
             />
           ) : (
-            <AuthenticationMenuItems />
+            <AuthenticationMenuItems
+              activeItem={activeItem}
+              handleClick={handlers.itemClick}
+            />
           )}
-        </NavWrapper>
+        </Menu.Menu>
       </Container>
     </Menu>
   </div>
 );
 
-const BaseMenuItems = () => (
+const BaseMenuItems = ({ activeItem, handleClick }) => (
   <React.Fragment>
     <Menu.Item as="a" header>
       <Image size="mini" src="" style={{ marginRight: "1.5em" }} />
-      Task Manager
+      Taskma
     </Menu.Item>
     <NavLink to={routes.pages.home}>
-      <Menu.Item as="a">Home</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="home"
+        active={activeItem === "home"}
+        onClick={handleClick}
+      />
     </NavLink>
     <NavLink to={routes.pages.about}>
-      <Menu.Item as="a">About</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="about"
+        active={activeItem === "about"}
+        onClick={handleClick}
+      />
     </NavLink>
     <NavLink to={routes.pages.contact}>
-      <Menu.Item as="a">Contact</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="contact"
+        active={activeItem === "contact"}
+        onClick={handleClick}
+      />
     </NavLink>
   </React.Fragment>
 );
 
-const AuthenticationMenuItems = () => (
+const AuthenticationMenuItems = ({ activeItem, handleClick }) => (
   <React.Fragment>
     <NavLink to={routes.pages.login}>
-      <Menu.Item as="a">Login</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="login"
+        active={activeItem === "login"}
+        onClick={handleClick}
+      />
     </NavLink>
     <NavLink to={routes.pages.signup}>
-      <Menu.Item as="a">Sign up</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="sign up"
+        active={activeItem === "sign up"}
+        onClick={handleClick}
+      />
     </NavLink>
   </React.Fragment>
 );
@@ -103,11 +134,17 @@ const AuthenticatedMenuItems = ({
   addProjectMode,
   setAddProjectMode,
   userCredentials,
-  handleLogout,
+  handlers,
+  activeItem,
 }) => (
   <React.Fragment>
     <NavLink to={routes.pages.projects.list}>
-      <Menu.Item as="a">Projects</Menu.Item>
+      <Menu.Item
+        as="a"
+        name="my projects"
+        active={activeItem === "my projects"}
+        onClick={handlers.itemClick}
+      />
     </NavLink>
     <AddProjectModal
       modalOpen={addProjectMode}
@@ -119,12 +156,15 @@ const AuthenticatedMenuItems = ({
     </Menu.Item>
     <Dropdown item simple text={userCredentials.username}>
       <Dropdown.Menu>
-        <Dropdown.Item>Profile</Dropdown.Item>
-        <Dropdown.Item>Change Password</Dropdown.Item>
-        <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+        <Dropdown.Item onClick={handlers.logout}>Logout</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   </React.Fragment>
 );
 
 export default NavbarContainer;
+
+// Need to include the following in AuthenticatedMenuItems Dropdown
+
+//        <Dropdown.Item>Profile</Dropdown.Item>
+//        <Dropdown.Item>Change Password</Dropdown.Item>
