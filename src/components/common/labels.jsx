@@ -3,7 +3,7 @@ import { Segment, Label, Popup } from "semantic-ui-react";
 import styled from "styled-components";
 
 export const LabelBox = ({ title, children, bgColor }) => (
-  <Segment style={{ backgroundColor: bgColor }}>
+  <Segment style={{ backgroundColor: bgColor, display: "inline-block" }}>
     <Label as="a" size="large" ribbon style={{ backgroundColor: "#25779540" }}>
       {title}
     </Label>
