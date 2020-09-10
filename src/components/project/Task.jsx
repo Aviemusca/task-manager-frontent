@@ -1,10 +1,12 @@
 import React from "react";
-import { TasksContext } from "../contexts/TasksContext";
 import styled from "styled-components";
 import { Card, Icon, Popup } from "semantic-ui-react";
 import TaskModal from "./TaskModal";
 import { StyledProgressBar } from "../common/progressBar";
 import { CardDates } from "../common/dates";
+import { StatusIcon } from "../common/statusIcon";
+import { DeadlineWarning } from "../common/deadlineWarning";
+import { StyledColorBox } from "../common/styles";
 import {
   getPriorityColor,
   getDifficultyColor,
@@ -39,16 +41,6 @@ const StyledColorBoxes = styled.div`
   width: 20%;
 `;
 
-const StyledColorBox = styled.span`
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-  margin: 0 5px;
-  border-radius: 25px;
-  border: solid 1px #777;
-  background: rgba(${(props) => `${props.color}`});
-`;
-
 const SecondaryProgressBarWrapper = styled.span`
   display: flex;
   justify-content: flex-start;
@@ -66,7 +58,6 @@ const TaskContainer = ({ tsk }) => {
   const [stateColor, setStateColor] = React.useState([]);
   const [difficultyColor, setDifficultyColor] = React.useState([]);
   const [selected, setSelected] = React.useState(false);
-  const { projectTasks, setProjectTasks } = React.useContext(TasksContext);
 
   React.useEffect(() => {
     setPriorityColor(getPriorityColor(task.priority));
@@ -117,15 +108,25 @@ const TaskContainer = ({ tsk }) => {
   };
   return (
     <div onClick={handleClick}>
-      <Task state={state} setState={setState} />
+      <Task
+        state={state}
+        setState={setState}
+        modal={
+          <TaskModal
+            task={task}
+            setTask={setTask}
+            open={modalOpen}
+            closeModal={closeModal}
+          />
+        }
+      />
     </div>
   );
 };
 
-const Task = ({ state, setState }) => {
+const Task = ({ state, setState, modal }) => {
   const { task, expanded, selected, modalOpen } = state;
-  const { setTask, setExpanded } = setState;
-  const { closeModal } = setState.setModal;
+  const { setExpanded } = setState;
 
   return (
     <React.Fragment>
@@ -161,14 +162,7 @@ const Task = ({ state, setState }) => {
           )
         }
       />
-      {modalOpen && (
-        <TaskModal
-          task={task}
-          setTask={setTask}
-          open={modalOpen}
-          closeModal={closeModal}
-        />
-      )}
+      {modalOpen && modal}
     </React.Fragment>
   );
 };
@@ -228,32 +222,6 @@ const DeadlineWarningContainer = ({ taskDeadline, taskStatus }) => {
   );
 };
 
-const DeadlineWarning = ({ deadlineStatus }) => {
-  return (
-    <Popup
-      content={taskDeadlines[deadlineStatus].popupContent}
-      position="right center"
-      trigger={
-        <Icon
-          color={taskDeadlines[deadlineStatus].color}
-          name="warning sign"
-          size="large"
-        />
-      }
-    />
-  );
-};
-
-const StatusIcon = ({ taskStatus }) => {
-  const { popupContent, color, iconName } = taskStatuses[taskStatus];
-  return (
-    <Popup
-      content={popupContent}
-      position="right center"
-      trigger={<Icon size="large" name={iconName} color={color} />}
-    />
-  );
-};
 const ColorBoxes = ({ task, colors }) => {
   const { priorityColor, difficultyColor } = colors;
   const { priority, difficulty } = task;

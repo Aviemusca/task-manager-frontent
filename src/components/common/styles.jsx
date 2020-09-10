@@ -84,3 +84,13 @@ export const StyledLabel = styled(Label)`
     color: green !important;
   }
 `;
+
+export const StyledColorBox = styled.span`
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 0 5px;
+  border-radius: 25px;
+  border: solid 1px #777;
+  background: rgba(${(props) => `${props.color}`});
+`;
