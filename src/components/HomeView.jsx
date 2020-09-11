@@ -14,6 +14,8 @@ import {
   taskStatuses,
   taskDeadlines,
 } from "../taskOptions";
+import undraw from "../images/undraw.png";
+
 import { addHours } from "date-fns";
 
 const initialTask = {
@@ -60,15 +62,26 @@ const Paragraph = styled.p`
 `;
 const ContentBox = styled(StyledCard)`
   margin-bottom: 1em;
+  width: 90%;
+`;
+const ImgWrapper = styled.img`
+  width: 80%;
+`;
+const StyledSiteTitle = styled.h1`
+  font-size: 3em;
+  text-align: center;
+  margin-bottom: 1em;
 `;
 const HomeView = (props) => {
   return (
     <Container>
-      <ContentBox>
-        <ContentGrid>
+      <ContentGrid>
+        <ContentBox>
           <Highlights />
-        </ContentGrid>
-      </ContentBox>
+        </ContentBox>
+        <ImgWrapper src={undraw} />
+      </ContentGrid>
+
       <ContentGrid>
         <div>
           <ContentBox>
@@ -147,14 +160,14 @@ const HomeView = (props) => {
 
 const Highlights = () => (
   <div>
-    <Header size="huge">Taskma</Header>
+    <StyledSiteTitle>Taskma</StyledSiteTitle>
     <List bulleted>
       <StyledListItem>
-        <h3>Create tasks, projects and task groups</h3>
+        <h3>Create projects, task groups and tasks</h3>
       </StyledListItem>
       <StyledListItem>
         <h3>
-          Set task statuses, priorities, difficulties and get deadline
+          Set task statuses, priorities difficulties and get deadline
           notifications
         </h3>
       </StyledListItem>
