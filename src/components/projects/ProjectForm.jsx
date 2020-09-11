@@ -46,6 +46,7 @@ export const ProjectForm = ({ closeModal }) => {
         onChange={(event) => handleInputChange(event)}
         required
       />
+
       <DateTimeInput
         label="Deadline"
         name="deadline"

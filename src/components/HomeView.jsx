@@ -15,6 +15,7 @@ import {
   taskDeadlines,
 } from "../taskOptions";
 import undraw from "../images/undraw.png";
+import taskSort from "../images/task-sort.png";
 
 import { addHours } from "date-fns";
 
@@ -37,13 +38,15 @@ const ContentGrid = styled.div`
   grid-gap: 6em;
   justify-items: start;
   align-items: center;
-  margin-top: 6em;
-  margin-bottom: 6em;
+  margin-top: 12em;
+  margin-bottom: 12em;
 `;
 
 const StyledListItem = styled(List.Item)`
   margin-top: 1em;
   margin-bottom: 1em;
+  font-size: 1.3em;
+  font-weight: 500;
 `;
 
 const TaskIconsGrid = styled.div`
@@ -70,124 +73,125 @@ const ImgWrapper = styled.img`
 const StyledSiteTitle = styled.h1`
   font-size: 3em;
   text-align: center;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 `;
 const HomeView = (props) => {
   return (
     <Container>
-      <ContentGrid>
-        <ContentBox>
-          <Highlights />
-        </ContentBox>
-        <ImgWrapper src={undraw} />
-      </ContentGrid>
+      <Banner />
+      <IconsSection />
 
-      <ContentGrid>
-        <div>
-          <ContentBox>
-            <Paragraph>
-              You can set priority and difficulty levels for a task, from 1 to
-              10.
-            </Paragraph>
-            <Paragraph>
-              You can also set deadlines and update the status or progress level
-              of a task.
-            </Paragraph>
-          </ContentBox>
-
-          <ContentBox>
-            <Paragraph>
-              Task priorities and difficulties are colour-coded.
-            </Paragraph>
-            <Paragraph>
-              Statuses and approaching deadlines are indicated by coloured
-              icons.
-            </Paragraph>
-            <Paragraph>
-              Hover over them with your mouse to see what they mean.
-            </Paragraph>
-          </ContentBox>
-        </div>
-        <div>
-          <StyledLabelBox>
-            <ColorRangeBox
-              title="Priorities"
-              range={10}
-              getColorFunc={getPriorityColor}
-            />
-          </StyledLabelBox>
-          <StyledLabelBox>
-            <ColorRangeBox
-              title="Difficulties"
-              range={10}
-              getColorFunc={getDifficultyColor}
-            />
-          </StyledLabelBox>
-          <StyledLabelBox>
-            <StatusesBox />
-          </StyledLabelBox>
-
-          <StyledLabelBox>
-            <DeadlinesBox />
-          </StyledLabelBox>
-        </div>
-      </ContentGrid>
-      <ContentGrid>
-        <div>
-          <ContentBox>
-            <Paragraph>
-              On the right, is a typical task where you can see the above icons
-              in action.{" "}
-            </Paragraph>
-          </ContentBox>
-          <ContentBox>
-            <Paragraph>
-              Click on the task to toggle between expanded and condensed forms.
-            </Paragraph>
-            <Paragraph>
-              By holding the shift key while clicking, you can edit the task and
-              check out how the colours and icons change!
-            </Paragraph>
-          </ContentBox>
-        </div>
-        <ContentBox>
-          <TaskContainer />
-        </ContentBox>
-      </ContentGrid>
+      <TaskDemoSection />
+      <ImgWrapper src={taskSort} />
     </Container>
   );
 };
-
-const Highlights = () => (
+const Banner = () => (
+  <ContentGrid>
+    <ContentBox>
+      <HighlightsSection />
+    </ContentBox>
+    <ImgWrapper src={undraw} />
+  </ContentGrid>
+);
+const HighlightsSection = () => (
   <div>
     <StyledSiteTitle>Taskma</StyledSiteTitle>
     <List bulleted>
+      <StyledListItem>Manage your projects and tasks</StyledListItem>
       <StyledListItem>
-        <h3>Create projects, task groups and tasks</h3>
+        Set task statuses, priorities and difficulties
       </StyledListItem>
+      <StyledListItem>Get deadline notifications</StyledListItem>
       <StyledListItem>
-        <h3>
-          Set task statuses, priorities difficulties and get deadline
-          notifications
-        </h3>
-      </StyledListItem>
-      <StyledListItem>
-        <h3>Sort tasks over multiple properties simultaneously</h3>
+        Sort tasks over multiple properties simultaneously
       </StyledListItem>
 
       <StyledListItem>
-        <h3>Combine sorting with filtering to target task sets</h3>
+        Combine sorting with filtering to target task sets
       </StyledListItem>
       <StyledListItem>
-        <h3>Try Taskma on a mock project</h3>
-      </StyledListItem>
-      <StyledListItem>
-        <h3>Sign up for free to create your own projects</h3>
+        Get started for free to create your own projects
       </StyledListItem>
     </List>
   </div>
 );
 
+const IconsSection = () => (
+  <ContentGrid>
+    <div>
+      <ContentBox>
+        <Paragraph>
+          You can set priority and difficulty levels for a task, from 1 to 10.
+        </Paragraph>
+        <Paragraph>
+          You can also set deadlines and update the status or progress level of
+          a task.
+        </Paragraph>
+      </ContentBox>
+
+      <ContentBox>
+        <Paragraph>
+          Task priorities and difficulties are colour-coded.
+        </Paragraph>
+        <Paragraph>
+          Statuses and approaching deadlines are indicated by coloured icons.
+        </Paragraph>
+        <Paragraph>
+          Hover over them with your mouse to see what they mean.
+        </Paragraph>
+      </ContentBox>
+    </div>
+    <div>
+      <StyledLabelBox>
+        <ColorRangeBox
+          title="Priorities"
+          range={10}
+          getColorFunc={getPriorityColor}
+        />
+      </StyledLabelBox>
+      <StyledLabelBox>
+        <ColorRangeBox
+          title="Difficulties"
+          range={10}
+          getColorFunc={getDifficultyColor}
+        />
+      </StyledLabelBox>
+      <StyledLabelBox>
+        <StatusesBox />
+      </StyledLabelBox>
+
+      <StyledLabelBox>
+        <DeadlinesBox />
+      </StyledLabelBox>
+    </div>
+  </ContentGrid>
+);
+
+const TaskDemoSection = () => (
+  <ContentGrid>
+    <div>
+      <ContentBox>
+        <Paragraph>
+          On the right, is a typical task where you can see the above icons in
+          action.{" "}
+        </Paragraph>
+      </ContentBox>
+      <ContentBox>
+        <Paragraph>
+          Click on the task to toggle between expanded and condensed forms.
+        </Paragraph>
+        <Paragraph>
+          By holding the shift key while clicking, you can edit the task and
+          check out how the colours and icons change!
+        </Paragraph>
+      </ContentBox>
+    </div>
+    <ContentBox>
+      <TaskContainer />
+    </ContentBox>
+  </ContentGrid>
+);
 const ColorRangeBox = ({ title, getColorFunc, range }) => (
   <LabelBox title={title}>
     {[...Array(range).keys()].map((item, index) => (

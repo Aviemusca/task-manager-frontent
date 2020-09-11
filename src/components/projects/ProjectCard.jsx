@@ -30,8 +30,7 @@ const StyledGridRight = styled.div`
   margin-top: 0.5em;
   padding: 2em 2em;
 `;
-const ProjectCard = ({ project }) => {
-  const { title, dateCreated, deadline, description, slug } = project;
+const ProjectCardContainer = ({ project }) => {
   const [tasks, setTasks] = React.useState([]);
 
   const getProjectTasks = () => {
@@ -45,6 +44,11 @@ const ProjectCard = ({ project }) => {
   React.useEffect(() => {
     getProjectTasks();
   }, []);
+  return <ProjectCard project={project} tasks={tasks} />;
+};
+
+const ProjectCard = ({ project, tasks }) => {
+  const { title, dateCreated, deadline, description, slug } = project;
   return (
     <StyledCard>
       <NavLink
@@ -81,8 +85,8 @@ const ProjectCard = ({ project }) => {
     </StyledCard>
   );
 };
-
-export default ProjectCard;
+export default ProjectCardContainer;
+export { ProjectCard };
 
 // <CardSubTitle>
 //

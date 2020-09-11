@@ -5,7 +5,7 @@ import TaskModal from "./TaskModal";
 import { StyledProgressBar } from "../common/progressBar";
 import { CardDates } from "../common/dates";
 import { StatusIcon } from "../common/statusIcon";
-import { DeadlineWarning } from "../common/deadlineWarning";
+import DeadlineWarning from "../common/deadlineWarning";
 import { StyledColorBox } from "../common/styles";
 import {
   getPriorityColor,
@@ -182,43 +182,11 @@ const Header = ({ task, colors }) => {
       <StyledIcons>
         <StatusIcon taskStatus={state} />
         {state !== 2 && (
-          <DeadlineWarningContainer
-            taskDeadline={task.deadline}
-            taskStatus={state}
-          />
+          <DeadlineWarning taskDeadline={task.deadline} taskStatus={state} />
         )}
       </StyledIcons>
       <ColorBoxes task={task} colors={colors} />
     </StyledHeader>
-  );
-};
-
-const DeadlineWarningContainer = ({ taskDeadline, taskStatus }) => {
-  const [deadlineStatus, setDeadlineStatus] = React.useState(null);
-
-  React.useEffect(() => {
-    setDeadlineStatus(getDeadlineStatus());
-  }, [taskDeadline, taskStatus]);
-
-  const getDeadlineStatus = () => {
-    const deadlineDate = new Date(taskDeadline);
-    const currentDate = new Date();
-    const difference = deadlineDate - currentDate;
-    // Deadline has passed
-    if (difference < 0) return 0;
-    // 24 hours till deadline
-    if (difference < 86400000) return 1;
-    // 48 hours till deadline
-    if (difference < 172800000) return 2;
-    return null;
-  };
-
-  return (
-    <React.Fragment>
-      {deadlineStatus !== null && taskStatus !== 2 && (
-        <DeadlineWarning deadlineStatus={deadlineStatus} />
-      )}
-    </React.Fragment>
   );
 };
 

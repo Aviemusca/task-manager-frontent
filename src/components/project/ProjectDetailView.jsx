@@ -15,6 +15,8 @@ export const ProjectGrid = styled.div`
   grid-template-rows: auto;
   align-items: start;
   grid-gap: 6em;
+  margin-top: 4em;
+  margin-bottom: 6em;
 `;
 
 const ProjectDetailViewContainer = (props) => {
@@ -49,7 +51,10 @@ const ProjectDetailView = ({ project, loading }) => {
   return (
     <div>
       <Loader active={loading} />
-      <Header project={project} />
+      <ProjectGrid>
+        <div></div>
+        <Header project={project} />
+      </ProjectGrid>
       <ProjectGrid>
         <SideBar project={project} />
         <GroupCardList project={project} />
