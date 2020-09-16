@@ -14,7 +14,6 @@ import {
 import { MiniIconButton } from "../common/buttons";
 import { SideBarTaskList } from "./TaskList";
 import { UpdateProjectForm } from "./UpdateProjectForm";
-import Archive from "./Archive";
 import DeleteModal from "./DeleteProjectModal";
 import AddGroupModal from "./AddGroupModal";
 import SortModal from "./SortModal";
@@ -34,7 +33,6 @@ const SideBarContainer = ({ project }) => {
   const [deleteMode, setDeleteMode] = React.useState(false);
   const [sortMode, setSortMode] = React.useState(false);
   const [filterMode, setFilterMode] = React.useState(false);
-  const [archiveMode, setArchiveMode] = React.useState(false);
   const [sortProps, setSortProps] = React.useState([sortOptions[0]]);
   const { filterProps, setFilterProps } = React.useContext(FiltersContext);
   const { projectTasks, patchTask } = React.useContext(TasksContext);
@@ -46,7 +44,6 @@ const SideBarContainer = ({ project }) => {
       deleteMode,
       sortMode,
       filterMode,
-      archiveMode,
     },
     sortProps,
     filterProps,
@@ -60,42 +57,21 @@ const SideBarContainer = ({ project }) => {
       setDeleteMode,
       setSortMode,
       setFilterMode,
-      setArchiveMode,
     },
     setSortProps,
     setFilterProps,
   };
 
-  const handleArchiveTasks = () => {
-    projectTasks.forEach((task) => {
-      if (task.selected) {
-        const newTask = [...task];
-        newTask.archived = true;
-        patchTask(newTask);
-      }
-    });
-  };
-  return (
-    <SideBar
-      state={state}
-      setState={setState}
-      archiveTasks={handleArchiveTasks}
-    />
-  );
+  return <SideBar state={state} setState={setState} />;
 };
-const SideBar = ({ state, setState, archiveTasks }) => {
+const SideBar = ({ state, setState }) => {
   return (
     <div>
-      <ProjectManager
-        state={state}
-        setState={setState}
-        archiveTasks={archiveTasks}
-      />
-      <Archive />
+      <ProjectManager state={state} setState={setState} />
     </div>
   );
 };
-const ProjectManager = ({ state, setState, archiveTasks }) => {
+const ProjectManager = ({ state, setState }) => {
   const { project } = state;
   const { setModes } = setState;
 
@@ -104,7 +80,7 @@ const ProjectManager = ({ state, setState, archiveTasks }) => {
       <Header setModes={setModes} />
       <Modals state={state} setState={setState} />
       <ManagerProgressBar />
-      <TaskOptionButtons setModes={setModes} archiveTasks={archiveTasks} />
+      <TaskOptionButtons setModes={setModes} />
       <SortOrderBreadcrumbs
         sections={state.sortProps.map((item) => item.name)}
       />
@@ -213,8 +189,8 @@ const ProjectOptionButtons = ({ setModes }) => {
     </div>
   );
 };
-const TaskOptionButtons = ({ setModes, archiveTasks }) => {
-  const { setSortMode, setFilterMode, setArchiveMode } = setModes;
+const TaskOptionButtons = ({ setModes }) => {
+  const { setSortMode, setFilterMode } = setModes;
   return (
     <div>
       <Button.Group>
@@ -227,11 +203,6 @@ const TaskOptionButtons = ({ setModes, archiveTasks }) => {
           handleClick={() => setFilterMode(true)}
           iconName={"filter"}
           popupContent={"Filter Tasks"}
-        />
-        <MiniIconButton
-          handleClick={() => archiveTasks()}
-          iconName={"archive"}
-          popupContent={"Archive Selected Tasks"}
         />
       </Button.Group>
     </div>
@@ -246,7 +217,7 @@ const ManagerProgressBar = () => {
           <ProgressBar items={managerTasks} />
         </div>
       }
-      content="Completion of filtered tasks"
+      content="Filtered tasks complete"
     />
   );
 };

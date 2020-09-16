@@ -21,12 +21,6 @@ export default function LoginView({ userCredentials, setUserCredentials }) {
             <NavLink to={routes.pages.signup}> Sign Up</NavLink>
           </small>
         </div>
-        <div>
-          <small>
-            Forgot your password?
-            <NavLink to={routes.pages.home}> Reset Password</NavLink>
-          </small>
-        </div>
       </AuthFormFooter>
     </AuthFormContainer>
   );

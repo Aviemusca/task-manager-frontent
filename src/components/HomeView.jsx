@@ -118,54 +118,59 @@ const HighlightsSection = () => (
 );
 
 const IconsSection = () => (
-  <ContentGrid>
-    <div>
-      <ContentBox>
-        <Paragraph>
-          You can set priority and difficulty levels for a task, from 1 to 10.
-        </Paragraph>
-        <Paragraph>
-          You can also set deadlines and update the status or progress level of
-          a task.
-        </Paragraph>
-      </ContentBox>
+  <React.Fragment>
+    <h1 style={{ textAlign: "center", marginTop: "15em" }}>
+      Color Codes and Icons
+    </h1>
+    <ContentGrid>
+      <div>
+        <ContentBox>
+          <Paragraph>
+            You can set priority and difficulty levels for a task, from 1 to 10.
+          </Paragraph>
+          <Paragraph>
+            You can also set deadlines and update the status or progress level
+            of a task.
+          </Paragraph>
+        </ContentBox>
 
-      <ContentBox>
-        <Paragraph>
-          Task priorities and difficulties are colour-coded.
-        </Paragraph>
-        <Paragraph>
-          Statuses and approaching deadlines are indicated by coloured icons.
-        </Paragraph>
-        <Paragraph>
-          Hover over them with your mouse to see what they mean.
-        </Paragraph>
-      </ContentBox>
-    </div>
-    <div>
-      <StyledLabelBox>
-        <ColorRangeBox
-          title="Priorities"
-          range={10}
-          getColorFunc={getPriorityColor}
-        />
-      </StyledLabelBox>
-      <StyledLabelBox>
-        <ColorRangeBox
-          title="Difficulties"
-          range={10}
-          getColorFunc={getDifficultyColor}
-        />
-      </StyledLabelBox>
-      <StyledLabelBox>
-        <StatusesBox />
-      </StyledLabelBox>
+        <ContentBox>
+          <Paragraph>
+            Task priorities and difficulties are colour-coded.
+          </Paragraph>
+          <Paragraph>
+            Statuses and approaching deadlines are indicated by coloured icons.
+          </Paragraph>
+          <Paragraph>
+            Hover over them with your mouse to see what they mean.
+          </Paragraph>
+        </ContentBox>
+      </div>
+      <div>
+        <StyledLabelBox>
+          <ColorRangeBox
+            title="Priorities"
+            range={10}
+            getColorFunc={getPriorityColor}
+          />
+        </StyledLabelBox>
+        <StyledLabelBox>
+          <ColorRangeBox
+            title="Difficulties"
+            range={10}
+            getColorFunc={getDifficultyColor}
+          />
+        </StyledLabelBox>
+        <StyledLabelBox>
+          <StatusesBox />
+        </StyledLabelBox>
 
-      <StyledLabelBox>
-        <DeadlinesBox />
-      </StyledLabelBox>
-    </div>
-  </ContentGrid>
+        <StyledLabelBox>
+          <DeadlinesBox />
+        </StyledLabelBox>
+      </div>
+    </ContentGrid>
+  </React.Fragment>
 );
 
 const TaskDemoSection = () => (
