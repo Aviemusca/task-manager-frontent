@@ -20,12 +20,6 @@ function ProjectsProvider(props) {
   const [projects, setProjects] = useState([]);
   const [newProject, setNewProject] = useState(initialNewProject);
 
-  useEffect(() => fetchProjects(), []);
-  // Re-fetch projects when new project added, as slug created server side
-  useEffect(() => {
-    fetchProjects();
-  }, [projects.length]);
-
   const fetchProjects = () => {
     axios
       .get(routes.api.projects.viewset, axiosHeaders)

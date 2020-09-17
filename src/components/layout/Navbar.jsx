@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Dropdown, Image, Menu, Icon } from "semantic-ui-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import routes from "../../routes";
 
 const emptyCredentials = {
@@ -10,23 +10,29 @@ const emptyCredentials = {
 };
 
 const NavbarContainer = ({ userCredentials, setUserCredentials }) => {
-  const [activeItem, setActiveItem] = React.useState("home");
-
+  const [redirect, setRedirect] = React.useState("");
   const handlers = {
-    itemClick: (e, { name }) => setActiveItem(name),
     logout: () => {
       localStorage.removeItem("taskManagerAuthenticationToken");
       localStorage.removeItem("taskManagerAuthenticationUsername");
       setUserCredentials(emptyCredentials);
+      setRedirect(routes.pages.home);
     },
   };
-  return <Navbar userCredentials={userCredentials} handlers={handlers} />;
+  return (
+    <Navbar
+      userCredentials={userCredentials}
+      handlers={handlers}
+      redirect={redirect}
+    />
+  );
 };
 
-const Navbar = ({ userCredentials, activeItem, handlers }) => (
+const Navbar = ({ userCredentials, handlers, redirect }) => (
   <div className="bg-gradient">
     <Menu fixed="top" inverted pointing>
       <Container>
+        {redirect && <Redirect to={redirect} />}
         <BaseMenuItems />
         <Menu.Menu position="right">
           {userCredentials.token ? (
