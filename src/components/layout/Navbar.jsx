@@ -20,36 +20,22 @@ const NavbarContainer = ({ userCredentials, setUserCredentials }) => {
       setUserCredentials(emptyCredentials);
     },
   };
-  return (
-    <Navbar
-      userCredentials={userCredentials}
-      activeItem={activeItem}
-      setActiveItem={setActiveItem}
-      handlers={handlers}
-    />
-  );
+  return <Navbar userCredentials={userCredentials} handlers={handlers} />;
 };
 
 const Navbar = ({ userCredentials, activeItem, handlers }) => (
   <div className="bg-gradient">
     <Menu fixed="top" inverted pointing>
       <Container>
-        <BaseMenuItems
-          activeItem={activeItem}
-          handleClick={handlers.itemClick}
-        />
+        <BaseMenuItems />
         <Menu.Menu position="right">
           {userCredentials.token ? (
             <AuthenticatedMenuItems
               userCredentials={userCredentials}
-              activeItem={activeItem}
               handlers={handlers}
             />
           ) : (
-            <AuthenticationMenuItems
-              activeItem={activeItem}
-              handleClick={handlers.itemClick}
-            />
+            <AuthenticationMenuItems />
           )}
         </Menu.Menu>
       </Container>
@@ -57,77 +43,42 @@ const Navbar = ({ userCredentials, activeItem, handlers }) => (
   </div>
 );
 
-const BaseMenuItems = ({ activeItem, handleClick }) => (
+const BaseMenuItems = () => (
   <React.Fragment>
     <Menu.Item as="a" header>
       <Image size="mini" src="" style={{ marginRight: "1.5em" }} />
       Tamska
     </Menu.Item>
     <NavLink to={routes.pages.home}>
-      <Menu.Item
-        as="a"
-        name="home"
-        active={activeItem === "home"}
-        onClick={handleClick}
-      />
+      <Menu.Item as="a" name="home" />
     </NavLink>
     <NavLink to={routes.pages.about}>
-      <Menu.Item
-        as="a"
-        name="about"
-        active={activeItem === "about"}
-        onClick={handleClick}
-      />
+      <Menu.Item as="a" name="about" />
     </NavLink>
     <NavLink to={routes.pages.contact}>
-      <Menu.Item
-        as="a"
-        name="contact"
-        active={activeItem === "contact"}
-        onClick={handleClick}
-      />
+      <Menu.Item as="a" name="contact" />
     </NavLink>
   </React.Fragment>
 );
 
-const AuthenticationMenuItems = ({ activeItem, handleClick }) => (
+const AuthenticationMenuItems = () => (
   <React.Fragment>
     <NavLink to={routes.pages.login}>
-      <Menu.Item
-        as="a"
-        name="login"
-        active={activeItem === "login"}
-        onClick={handleClick}
-      />
+      <Menu.Item as="a" name="login" />
     </NavLink>
     <NavLink to={routes.pages.signup}>
-      <Menu.Item
-        as="a"
-        name="sign up"
-        active={activeItem === "sign up"}
-        onClick={handleClick}
-      />
+      <Menu.Item as="a" name="sign up" />
     </NavLink>
   </React.Fragment>
 );
 
-const AuthenticatedMenuItems = ({ userCredentials, handlers, activeItem }) => (
+const AuthenticatedMenuItems = ({ userCredentials, handlers }) => (
   <React.Fragment>
     <NavLink to={routes.pages.projects.list}>
-      <Menu.Item
-        as="a"
-        name="my projects"
-        active={activeItem === "my projects"}
-        onClick={handlers.itemClick}
-      />
+      <Menu.Item as="a" name="my projects" />
     </NavLink>
     <NavLink to={routes.pages.addProject}>
-      <Menu.Item
-        as="a"
-        name="new project"
-        active={activeItem === "new project"}
-        onClick={handlers.itemClick}
-      >
+      <Menu.Item as="a" name="new project">
         <Icon name="plus" /> Project
       </Menu.Item>
     </NavLink>
