@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "semantic-ui-react";
-import { ProjectForm } from "./ProjectForm";
+import { ProjectForm } from "../project/ProjectForm";
 import { CustomFormContainerLg, CustomFormTitle } from "../common/styles";
 
 const AddProjectModal = ({ modalOpen, closeModal }) => {

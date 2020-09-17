@@ -1,14 +1,22 @@
 import React, { useState, useEffect, createContext } from "react";
 import axios from "axios";
 
-import axiosOptions, { axiosHeaders } from "../../axiosOptions";
+import { axiosHeaders } from "../../axiosOptions";
 import routes from "../../routes";
 import { replaceItem } from "../../utils/arrays";
+import { getNonOffsetNewDate } from "../../utils/dates";
+
+import { addWeeks } from "date-fns";
 
 const ProjectsContext = createContext();
 
 function ProjectsProvider(props) {
-  const initialNewProject = { title: "", description: "" };
+  const initialNewProject = {
+    title: "",
+    description: "",
+    deadline: addWeeks(new Date(), 1),
+    dateCreated: getNonOffsetNewDate(new Date()),
+  };
   const [projects, setProjects] = useState([]);
   const [newProject, setNewProject] = useState(initialNewProject);
 

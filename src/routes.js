@@ -49,6 +49,7 @@ const routes = {
       list: baseClientProjectsUrl,
       detail: clientProjectDetailUrl,
     },
+    addProject: "/new-project/",
     login: "/login/",
     signup: "/signup/",
   },

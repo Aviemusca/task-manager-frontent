@@ -8,4 +8,9 @@ const formatTimeToString = (date) => {
   return formattedDate.toTimeString();
 };
 
-export { formatDateToString, formatTimeToString };
+const getNonOffsetNewDate = (date) => {
+  date.setTime(date.getTime() - new Date().getTimezoneOffset() * 60 * 1000);
+  return date;
+};
+
+export { formatDateToString, formatTimeToString, getNonOffsetNewDate };

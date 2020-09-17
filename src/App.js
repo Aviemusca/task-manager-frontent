@@ -8,6 +8,7 @@ import ContactView from "./components/ContactView";
 import LoginView from "./components/auth/LoginView";
 import SignUpView from "./components/auth/SignUpView";
 import ProjectsView from "./components/projects/ProjectsView";
+import AddProjectView from "./components/project/AddProjectView";
 import ProjectDetailView from "./components/project/ProjectDetailView";
 
 import routes from "./routes";
@@ -41,6 +42,11 @@ function App(props) {
             <Route exact path={routes.pages.home} component={HomeView} />
             <Route exact path={routes.pages.about} component={AboutView} />
             <Route exact path={routes.pages.contact} component={ContactView} />
+            <Route
+              exact
+              path={routes.pages.addProject}
+              component={AddProjectView}
+            />
             <Route
               exact
               path={routes.pages.projects.list}
