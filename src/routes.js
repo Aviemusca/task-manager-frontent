@@ -1,4 +1,4 @@
-const baseServerUrl = "http://tamska-backend.herokuapp.com/";
+const baseServerUrl = "http:127.0.0.1:8000/";
 
 const baseClientProjectsUrl = "/projects/";
 
