@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 
 import { Button, Form } from "semantic-ui-react";
-import { Redirect } from "react-router-dom";
 
 import AuthFormMixin from "./FormMixin";
 
@@ -24,7 +23,6 @@ class LoginForm extends React.Component {
         submitted: false,
         response: null,
       },
-      redirect: "",
     };
   }
   handleInputChange = (event) => {
@@ -88,7 +86,6 @@ class LoginForm extends React.Component {
     const { username, password } = { ...this.state.credentials };
     return (
       <React.Fragment>
-        {this.state.redirect && <Redirect to={this.state.redirect} />}
         <Form id="auth-form" onSubmit={(event) => this.handleSubmit(event)}>
           {this.injectSubmissionMessage()}
           <Form.Input
