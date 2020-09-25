@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Container, Popup, List, Header } from "semantic-ui-react";
+import { Container, Popup, List } from "semantic-ui-react";
 import { StyledCard, StyledColorBox } from "./common/styles";
 import { LabelBox } from "./common/labels";
 import { StatusIcon } from "./common/statusIcon";
@@ -47,12 +47,6 @@ const StyledListItem = styled(List.Item)`
   margin-bottom: 1em;
   font-size: 1.3em;
   font-weight: 500;
-`;
-
-const TaskIconsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: 1fr 1fr;
 `;
 
 const StyledLabelBox = styled.div`
