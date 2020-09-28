@@ -3,14 +3,21 @@ import { Form, Button } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
 import routes from "../../routes";
 import { DateTimeInput } from "semantic-ui-calendar-react";
+import { getNonOffsetNewDate } from "../../utils/dates";
 
+import { addWeeks } from "date-fns";
 import { ProjectsContext } from "../contexts/ProjectsContext";
 
+const initialProject = {
+  title: "",
+  description: "",
+  deadline: addWeeks(new Date(), 1),
+  dateCreated: new Date(),
+};
+
 export const ProjectForm = () => {
-  const { newProject, setNewProject, postNewProject } = useContext(
-    ProjectsContext
-  );
-  const { title, description, deadline } = newProject;
+  const { postProject } = useContext(ProjectsContext);
+  const [newProject, setNewProject] = React.useState(initialProject);
   const [redirect, setRedirect] = React.useState("");
 
   const handleInputChange = (event) => {
@@ -26,7 +33,7 @@ export const ProjectForm = () => {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await postNewProject();
+    await postProject(newProject);
     setRedirect(routes.pages.projects.list);
   }
   return (
@@ -39,7 +46,7 @@ export const ProjectForm = () => {
           type="text"
           name="title"
           placeholder="Enter a project title"
-          value={title}
+          value={newProject.title}
           onChange={(event) => handleInputChange(event)}
           required
         />
@@ -49,7 +56,7 @@ export const ProjectForm = () => {
           type="text"
           name="description"
           placeholder="Enter a project description"
-          value={description}
+          value={newProject.description}
           onChange={(event) => handleInputChange(event)}
           required
         />
@@ -60,7 +67,7 @@ export const ProjectForm = () => {
           dateFormat="YYYY-MM-DD"
           timeFormat="24"
           placeholder="Select a deadline"
-          value={deadline}
+          value={newProject.deadline}
           onChange={handleDeadlineChange}
         />
         <Button type="submit" primary>

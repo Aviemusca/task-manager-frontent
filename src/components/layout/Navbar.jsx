@@ -53,7 +53,7 @@ const BaseMenuItems = () => (
   <React.Fragment>
     <Menu.Item as="a" header>
       <Image size="mini" src="" style={{ marginRight: "1.5em" }} />
-      Tamska
+      Taskma
     </Menu.Item>
     <NavLink to={routes.pages.home}>
       <Menu.Item as="a" name="home" />

@@ -148,6 +148,7 @@ const TaskForm = ({ task, handlers, buttons }) => {
           iconPosition="left"
           dateFormat="YYYY-MM-DD"
           timeFormat="24"
+          divider="  "
           placeholder="Select a deadline"
           value={task.deadline}
           onChange={handlers.handleDeadlineChange}

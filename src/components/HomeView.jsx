@@ -212,7 +212,7 @@ const StatusesBox = () => (
 
 const DeadlinesBox = () => (
   <LabelBox title="Deadline Warnings">
-    {taskDeadlines.reverse().map((deadline, id) => (
+    {[...taskDeadlines].reverse().map((deadline, id) => (
       <DeadlineWarning deadlineStatus={id} />
     ))}
   </LabelBox>

@@ -24,14 +24,18 @@ const DeadlineWarningContainer = ({ taskDeadline, taskStatus }) => {
 
   return (
     <React.Fragment>
-      {deadlineStatus !== null && taskStatus !== 2 && (
-        <DeadlineWarning deadlineStatus={deadlineStatus} />
+      {deadlineStatus !== null && taskStatus != 2 && (
+        <DeadlineWarning
+          deadlineStatus={deadlineStatus}
+          taskStatus={taskStatus}
+        />
       )}
     </React.Fragment>
   );
 };
 
-export const DeadlineWarning = ({ deadlineStatus }) => {
+export const DeadlineWarning = ({ deadlineStatus, taskStatus }) => {
+  console.log(deadlineStatus, taskStatus);
   return (
     <Popup
       content={taskDeadlines[deadlineStatus].popupContent}

@@ -7,7 +7,7 @@ const AboutView = () => (
     <StyledCard style={{ marginTop: "6em" }}>
       <h1>Web Technologies Used</h1>
       <p>
-        Tamska is a desktop web application for task management built with
+        Taskma is a desktop web application for task management built with
         modern web technologies.
       </p>
       <p>

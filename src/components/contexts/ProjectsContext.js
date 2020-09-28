@@ -1,24 +1,15 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, createContext } from "react";
 import axios from "axios";
 
 import { axiosHeaders } from "../../axiosOptions";
 import routes from "../../routes";
 import { replaceItem } from "../../utils/arrays";
-import { getNonOffsetNewDate } from "../../utils/dates";
-
-import { addWeeks } from "date-fns";
 
 const ProjectsContext = createContext();
 
 function ProjectsProvider(props) {
-  const initialNewProject = {
-    title: "",
-    description: "",
-    deadline: addWeeks(new Date(), 1),
-    dateCreated: getNonOffsetNewDate(new Date()),
-  };
   const [projects, setProjects] = useState([]);
-  const [newProject, setNewProject] = useState(initialNewProject);
+  const [loading, setLoading] = useState(false);
 
   const fetchProjects = () => {
     axios
@@ -26,18 +17,15 @@ function ProjectsProvider(props) {
       .then((response) => {
         setProjects(response.data);
       })
+      .then(setLoading(false))
       .catch((error) => console.log(error));
   };
 
-  const resetNewProject = () => {
-    setNewProject(initialNewProject);
-  };
-
-  const postNewProject = () => {
+  const postProject = (project) => {
     axios
-      .post(routes.api.projects.viewset, newProject, axiosHeaders)
+      .post(routes.api.projects.viewset, project, axiosHeaders)
       .then(() => {
-        setProjects([...projects, newProject]);
+        setProjects([...projects, project]);
       })
       .catch((error) => console.log(error));
   };
@@ -71,11 +59,10 @@ function ProjectsProvider(props) {
       value={{
         projects,
         setProjects,
-        newProject,
-        setNewProject,
-        resetNewProject,
+        loading,
+        setLoading,
         fetchProjects,
-        postNewProject,
+        postProject,
         patchProject,
         deleteProject,
       }}

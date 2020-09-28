@@ -1,13 +1,18 @@
 import React from "react";
+import { ProjectsContext } from "../contexts/ProjectsContext";
 
 import ProjectCardList from "./ProjectCardList";
 
-function ProjectsView(props) {
-  return (
-    <React.Fragment>
-      <ProjectCardList />
-    </React.Fragment>
+const ProjectsViewContainer = (props) => {
+  const { projects, setProjects, fetchProjects } = React.useContext(
+    ProjectsContext
   );
-}
 
-export default ProjectsView;
+  React.useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  return <ProjectCardList projects={projects} />;
+};
+
+export default ProjectsViewContainer;

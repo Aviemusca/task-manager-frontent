@@ -8,6 +8,7 @@ import UpdateGroupModal from "./UpdateGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
 import { GroupTaskList } from "./TaskList";
 import { TasksContext } from "../contexts/TasksContext";
+import { add as addToDate } from "date-fns";
 
 const CardSubTitle = styled.h4`
   text-color: #777;
@@ -146,6 +147,8 @@ const AddTaskContainer = ({ state, setState }) => {
     description: "",
     projectSlug: group.projectSlug,
     group: group.id,
+    dateCreated: new Date(),
+    deadline: addToDate(new Date(), { weeks: 1 }),
   };
   const { postTask } = React.useContext(TasksContext);
   const [newTask, setNewTask] = React.useState(emptyTask);
