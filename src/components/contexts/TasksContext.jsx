@@ -44,6 +44,7 @@ function TasksProvider(props) {
   };
 
   const patchTask = (task) => {
+    task = { ...task, deadline: new Date(task.deadline) };
     axios
       .patch(
         routes.api.tasks.projectDetail(task.projectSlug, task.id),
