@@ -14,12 +14,15 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
+    "react-router-hash-link": "^2.1.0",
     "react-scripts": "^3.4.3",
     "react-semantic-ui-range": "^0.7.0",
     "react-uuid": "^1.0.2",
+    "redux": "^4.0.5",
     "semantic-ui-calendar-react": "^0.15.3",
     "semantic-ui-react": "^0.88.2",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "video-react": "^0.14.1"
   },
   "scripts": {
     "start": "react-scripts start",

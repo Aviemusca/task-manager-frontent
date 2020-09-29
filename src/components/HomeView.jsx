@@ -1,4 +1,6 @@
 import React from "react";
+import { HashLink } from "react-router-hash-link";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Container, Popup, List } from "semantic-ui-react";
 import { StyledCard, StyledColorBox } from "./common/styles";
@@ -14,10 +16,13 @@ import {
   taskStatuses,
   taskDeadlines,
 } from "../taskOptions";
+
 import undraw from "../images/undraw.png";
-import taskSort from "../images/task-sort.png";
+import { Player } from "video-react";
+import "../../node_modules/video-react/dist/video-react.css";
 
 import { addHours } from "date-fns";
+import routes from "../routes";
 
 const initialTask = {
   title: "Multi-sorting algorithm",
@@ -38,7 +43,7 @@ const ContentGrid = styled.div`
   grid-gap: 6em;
   justify-items: start;
   align-items: center;
-  margin-top: 12em;
+  margin-top: 6em;
   margin-bottom: 12em;
 `;
 
@@ -61,6 +66,10 @@ const ContentBox = styled(StyledCard)`
   margin-bottom: 1em;
   width: 90%;
 `;
+const ContentTitle = styled.h1`
+  text-align: center;
+  margin-top: 15em;
+`;
 const ImgWrapper = styled.img`
   width: 80%;
 `;
@@ -73,15 +82,15 @@ const HomeView = (props) => {
   return (
     <Container>
       <Banner />
+      <DemoVideo />
       <IconsSection />
 
       <TaskDemoSection />
-      <ImgWrapper src={taskSort} />
     </Container>
   );
 };
 const Banner = () => (
-  <ContentGrid>
+  <ContentGrid style={{ marginTop: "12em" }}>
     <ContentBox>
       <HighlightsSection />
     </ContentBox>
@@ -105,17 +114,53 @@ const HighlightsSection = () => (
         Combine sorting with filtering to target task sets
       </StyledListItem>
       <StyledListItem>
-        Get started for free to create your own projects
+        <HashLink to="#demo-video">Get started</HashLink> today for free
       </StyledListItem>
     </List>
   </div>
 );
 
+const DemoVideo = () => (
+  <React.Fragment>
+    <ContentTitle id="demo-video">Demo Video</ContentTitle>
+    <ContentGrid>
+      <ContentBox>
+        <Paragraph>
+          Before you <Link to={routes.pages.signup}>sign up</Link>, check out
+          the demo video to the right to get an idea of what this application
+          does.
+        </Paragraph>
+        <Paragraph>
+          Then make sure to read over the{" "}
+          <HashLink to="#color-code-and-icons">color codes and icons</HashLink>{" "}
+          section and play around with the{" "}
+          <HashLink to="#example-task">example task.</HashLink>
+        </Paragraph>
+      </ContentBox>
+      <video
+        id="my-video"
+        class="video-js"
+        controls
+        preload="auto"
+        width="440"
+        height="264"
+        data-setup="{}"
+      >
+        <source src="videos/taskma.mp4" type="video/mp4" />
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to
+          a web browser that
+          <a href="https://videojs.com/html5-video-support/" target="_blank">
+            supports HTML5 video
+          </a>
+        </p>
+      </video>
+    </ContentGrid>
+  </React.Fragment>
+);
 const IconsSection = () => (
   <React.Fragment>
-    <h1 style={{ textAlign: "center", marginTop: "15em" }}>
-      Color Codes and Icons
-    </h1>
+    <ContentTitle id="color-code-and-icons">Color Codes and Icons</ContentTitle>
     <ContentGrid>
       <div>
         <ContentBox>
@@ -168,28 +213,34 @@ const IconsSection = () => (
 );
 
 const TaskDemoSection = () => (
-  <ContentGrid>
-    <div>
+  <React.Fragment>
+    <ContentTitle id="example-task">Example Task</ContentTitle>
+    <ContentGrid>
+      <div>
+        <ContentBox>
+          <Paragraph>
+            On the right, is a typical task where you can see the above icons in
+            action.{" "}
+          </Paragraph>
+        </ContentBox>
+        <ContentBox>
+          <Paragraph>
+            Click on the task to toggle between expanded and condensed forms.
+          </Paragraph>
+          <Paragraph>
+            <em>
+              <strong>By holding the shift key</strong>
+            </em>{" "}
+            while clicking, you can edit the task and check out how the colours
+            and icons change!
+          </Paragraph>
+        </ContentBox>
+      </div>
       <ContentBox>
-        <Paragraph>
-          On the right, is a typical task where you can see the above icons in
-          action.{" "}
-        </Paragraph>
+        <TaskContainer />
       </ContentBox>
-      <ContentBox>
-        <Paragraph>
-          Click on the task to toggle between expanded and condensed forms.
-        </Paragraph>
-        <Paragraph>
-          By holding the shift key while clicking, you can edit the task and
-          check out how the colours and icons change!
-        </Paragraph>
-      </ContentBox>
-    </div>
-    <ContentBox>
-      <TaskContainer />
-    </ContentBox>
-  </ContentGrid>
+    </ContentGrid>
+  </React.Fragment>
 );
 const ColorRangeBox = ({ title, getColorFunc, range }) => (
   <LabelBox title={title}>
